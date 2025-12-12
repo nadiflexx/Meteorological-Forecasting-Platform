@@ -60,6 +60,7 @@ __pycache__/
 *.pyd
 .cache/
 .ipynb_checkpoints/
+.vscode
 
 # ============================================
 #  STREAMLIT
