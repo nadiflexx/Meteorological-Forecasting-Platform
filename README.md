@@ -1,48 +1,110 @@
-# Meteorological-Prediction-System
+# ============================================
 
-Este proyecto tiene como objetivo principal proporcionar un simulador de predicción meteorológica preciso y eficiente, aprovechando las capacidades de Big Data para gestionar grandes volúmenes de datos y realizar previsiones a corto plazo con alta precisión.
+# ENTORNOS VIRTUALES
 
-# P3 Predicción Meteorológica con IA
+# ============================================
 
-Proyecto de predicción meteorológica en Python usando modelos de aprendizaje automático (Random Forest).
+.venv/
+venv/
+ENV/
+env/
+\*.egg-info/
 
-## Estructura del proyecto
+# ============================================
 
-```
-P3_Prediccion_Meteorologica_IA/
-├── src/
-│   ├── train_model.py        # Entrena modelos con datos 2020–2024
-│   └── predict_future.py     # Genera predicciones para 2025
-├── data/processed/           # Resultados (CSV para Power BI)
-├── models/                   # Modelos entrenados (.pkl)
-└── README.md
-```
+# ARCHIVOS DE CONFIGURACIÓN SENSIBLES
 
-## Cómo usarlo
+# ============================================
 
-1️⃣ Instalar dependencias (usando `uv` o `pip`):
+.env
+.env.\*
+\*.env
 
-```bash
-uv venv
-uv pip install pandas numpy scikit-learn joblib
-```
+# ============================================
 
-2️⃣ Entrenar modelos (usa datos simulados 2020–2024):
+# DATOS (CONTROL FINO)
 
-```bash
-uv run python src/train_model.py
-```
+# ============================================
 
-3️⃣ Generar predicciones para 2025:
+# Ignorar todo data por defecto
 
-```bash
-uv run python src/predict_future.py
-```
+data/\*
 
-4️⃣ El resultado se guarda en:
+# PERMITIR storage (datos de dominio)
 
-```
-data/processed/predicciones_2025.csv
-```
+!data/storage/
+!data/storage/\*\*
 
-Ese archivo puede cargarse en Power BI para visualizar la predicción diaria de temperatura, precipitación y probabilidad de lluvia para 2025.
+# Ignorar datos regenerables
+
+data/raw/
+data/processed/
+data/cache/
+
+# NO ignorar JSON de storage
+
+!data/storage/\*.json
+
+# ============================================
+
+# ARCHIVOS DE DATOS GENÉRICOS (FUERA DE STORAGE)
+
+# ============================================
+
+_.csv
+_.xlsx
+_.xls
+_.parquet
+\*.feather
+
+# ============================================
+
+# CACHE Y TEMPORALES
+
+# ============================================
+
+**pycache**/
+_.pyc
+_.pyo
+\*.pyd
+.cache/
+.ipynb_checkpoints/
+
+# ============================================
+
+# STREAMLIT
+
+# ============================================
+
+.streamlit
+
+# ============================================
+
+# CONFIGURACIÓN DE EDITORES
+
+# ============================================
+
+.vscode/
+.idea/
+\*.iml
+
+# ============================================
+
+# BUILD / DIST
+
+# ============================================
+
+dist/
+build/
+\*.spec
+
+# ============================================
+
+# SISTEMA
+
+# ============================================
+
+.DS_Store
+Thumbs.db
+_.bak
+_.old
