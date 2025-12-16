@@ -1,13 +1,13 @@
 import logging
 import sys
 
-from src.config.settings import LOG_DIR
+from src.config.settings import Paths
 
 
 def setup_logger(name="weather_ai"):
     # Crear carpeta de logs si no existe
-    if not LOG_DIR.exists():
-        LOG_DIR.mkdir(parents=True)
+    if not Paths.LOGS.exists():
+        Paths.LOGS.mkdir(parents=True)
 
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
@@ -18,7 +18,7 @@ def setup_logger(name="weather_ai"):
     )
 
     # Handler 1: Archivo (guarda todo)
-    file_handler = logging.FileHandler(LOG_DIR / "execution.log", encoding="utf-8")
+    file_handler = logging.FileHandler(Paths.LOGS / "execution.log", encoding="utf-8")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 

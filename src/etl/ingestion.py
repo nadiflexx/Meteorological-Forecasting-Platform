@@ -1,17 +1,23 @@
+"""
+Data Ingestion Logic.
+Manages saving partial JSONs and consolidating them by year.
+"""
+
 import json
+import os
 import re
 
-from src.config import settings
+from src.config.settings import Paths
 from src.utils.logger import log
 
 
 class DataIngestion:
     def __init__(self):
-        if not settings.DATA_RAW_DIR.exists():
-            settings.DATA_RAW_DIR.mkdir(parents=True)
+        if not Paths.RAW.exists():
+            Paths.RAW.mkdir(parents=True)
 
     def _sanitize_name(self, name):
-        """Limpieza de nombres de carpeta"""
+        """Clean folder names"""
         clean = re.sub(r"[^\w\s-]", "", name)
         clean = re.sub(r"[\s]+", "_", clean)
         return clean
@@ -20,7 +26,7 @@ class DataIngestion:
         clean_name = self._sanitize_name(station_name)
         folder_name = f"Station_{station_code}_{clean_name}"
 
-        station_path = settings.DATA_RAW_DIR / folder_name
+        station_path = Paths.RAW / folder_name
         if not station_path.exists():
             station_path.mkdir()
 
@@ -41,67 +47,71 @@ class DataIngestion:
 
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
+            # FORCE WRITE TO DISK (Safety for consolidation)
+            f.flush()
+            os.fsync(f.fileno())
 
-        log.info(f"💾 Guardado parcial: {filename}")
+        log.info(f"💾 Saved partial: {filename}")
 
     def consolidate_year(self, year, station_code, station_name):
         """
-        Une los parciales, guarda el anual y BORRA los parciales.
+        Joins partials, SORTS BY DATE, removes duplicates, and saves.
         """
         folder = self._get_station_year_folder(station_code, station_name, year)
 
         if not folder.exists():
             return
 
-        # 1. Identificar archivos
         files = sorted(folder.glob("part_*.json"))
 
         if not files:
             return
 
-        log.info(
-            f"🔄 Consolidando {len(files)} archivos para {station_name} ({year})..."
-        )
+        log.info(f"🔄 Consolidating {len(files)} files for {station_name} ({year})...")
 
         all_records = []
-        files_processed = []  # Lista para rastrear qué borrar luego
+        files_processed = []
 
-        # 2. Leer y Unificar
         for file in files:
             try:
                 with open(file, encoding="utf-8") as f:
                     content = json.load(f)
                     if isinstance(content, list):
                         all_records.extend(content)
-                        files_processed.append(
-                            file
-                        )  # Marcamos para borrar solo si se leyó bien
+                        files_processed.append(file)
             except Exception as e:
-                log.error(f"Error leyendo {file.name}: {e}")
+                log.error(f"Error reading {file.name}: {e}")
 
         if not all_records:
-            log.warning(f"No se encontraron registros válidos para {year}.")
             return
 
-        # 3. Guardar archivo final Consolidado
+        # 1. REMOVE DUPLICATES (Dictionary trick by date)
+        unique_records = {item["fecha"]: item for item in all_records}
+        cleaned_list = list(unique_records.values())
+
+        # 2. SORT BY DATE
+        cleaned_list.sort(key=lambda x: x["fecha"])
+
+        # 3. Save Final File
         final_filename = f"data_{year}.json"
         final_path = folder / final_filename
 
         try:
             with open(final_path, "w", encoding="utf-8") as f:
-                json.dump(all_records, f, ensure_ascii=False, indent=4)
+                json.dump(cleaned_list, f, ensure_ascii=False, indent=4)
+                f.flush()
+                os.fsync(f.fileno())
+
             log.info(
-                f"✨ CONSOLIDADO GUARDADO: {final_filename} ({len(all_records)} registros)"
+                f"✨ CONSOLIDATED: {final_filename} ({len(cleaned_list)} ordered days)"
             )
 
-            # 4. FASE DE LIMPIEZA (Solo si el guardado fue exitoso)
-            log.info(f"🗑️ Eliminando archivos parciales del año {year}...")
+            # 4. Cleanup Partials
             for p_file in files_processed:
                 try:
-                    p_file.unlink()  # Borrado físico del archivo
+                    p_file.unlink()
                 except Exception as e:
-                    log.error(f"No se pudo borrar {p_file.name}: {e}")
+                    log.error(f"Could not delete {p_file.name}: {e}")
 
         except Exception as e:
-            log.error(f"❌ Error crítico guardando consolidado {final_filename}: {e}")
-            log.warning("⚠️ Se conservan los archivos parciales por seguridad.")
+            log.error(f"❌ Error saving consolidated file: {e}")

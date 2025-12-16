@@ -1,90 +1,112 @@
-# Python
+# ============================================
+#  PYTHON CORE
+# ============================================
 __pycache__/
 *.py[cod]
-venv/
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Variables de Entorno (¡Nunca subir!)
+# ============================================
+#  VIRTUAL ENVIRONMENTS
+# ============================================
 .env
-
-# Datos (Los datos suelen pesar mucho para git)
-logs/
-
-# ============================================
-#  ENTORNOS VIRTUALES
-# ============================================
-.venv/
+.venv
+env/
 venv/
 ENV/
-env/
-*.egg-info/
+env.bak/
+venv.bak/
 
 # ============================================
-#  ARCHIVOS DE CONFIGURACIÓN SENSIBLES
+#  ENVIRONMENT VARIABLES (CRITICAL)
 # ============================================
 .env
 .env.*
-*.env
+!.env.example
 
 # ============================================
-#  DATOS (CONTROL FINO)
+#  DATA & ARTIFACTS
 # ============================================
+# Ignore all data by default to keep repo light
+data/raw/*
+data/processed/*
+data/predictions/*
 
-# Ignorar todo data por defecto
+# Keep the folder structure, just ignore content
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/predictions/.gitkeep
 
-# PERMITIR storage (datos de dominio)
-!data/storage/
-!data/storage/**
+# Ignore Logs
+logs/*.log
 
-# Ignorar datos regenerables
-data/processed/
-data/cache/
-
-# NO ignorar JSON de storage
-!data/storage/*.json
-
-# ============================================
-#  ARCHIVOS DE DATOS GENÉRICOS (FUERA DE STORAGE)
-# ============================================
-*.csv
-*.xlsx
-*.xls
-*.parquet
-*.feather
+# Ignore ML Models (Binaries are large)
+models/*.pkl
+models/*.joblib
 
 # ============================================
-#  CACHE Y TEMPORALES
+#  IDE & TOOLS
 # ============================================
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.cache/
-.ipynb_checkpoints/
-.vscode
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ============================================
+#  TESTING & QUALITY
+# ============================================
+.coverage
+htmlcov/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
 
 # ============================================
 #  STREAMLIT
 # ============================================
-.streamlit
+# Ignore secrets but keep config
+.streamlit/secrets.toml
 
 # ============================================
-#  CONFIGURACIÓN DE EDITORES
+#  DOCUMENTATION GENERATED
 # ============================================
-.vscode/
-.idea/
-*.iml
+site/
 
 # ============================================
-#  BUILD / DIST
+#  BLOQUEO ESPECÍFICO DE TU IMAGEN
 # ============================================
-dist/
-build/
-*.spec
 
-# ============================================
-#  SISTEMA
-# ============================================
-.DS_Store
-Thumbs.db
-*.bak
-*.old
+# 1. Secretos
+.env
+
+# 2. Caché local de APIs (OpenMeteo / AEMET)
+*.sqlite
+.cache.sqlite
+
+# 3. Reportes de Coverage (Tests)
+.coverage
+coverage.xml
+htmlcov/
+
+# 4. Carpetas generadas por MkDocs (si hiciste build)
+site/

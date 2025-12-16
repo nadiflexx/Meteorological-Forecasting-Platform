@@ -1,18 +1,18 @@
 import shutil
 
-from src.config import settings
+from src.config.settings import Paths
 from src.utils.logger import log
 
 
 def run_cleaner():
     log.info("🧹 INICIANDO LIMPIEZA DE CARPETAS VACÍAS (HISTÓRICAS)")
 
-    if not settings.DATA_RAW_DIR.exists():
+    if not Paths.RAW.exists():
         log.warning("⚠️ No existe el directorio de datos data/raw")
         return
 
     # 1. Obtener todas las carpetas de estaciones
-    station_dirs = sorted([d for d in settings.DATA_RAW_DIR.iterdir() if d.is_dir()])
+    station_dirs = sorted([d for d in Paths.RAW.iterdir() if d.is_dir()])
 
     for station_dir in station_dirs:
         log.info(f"🔎 Analizando estación: {station_dir.name}")
@@ -56,7 +56,8 @@ def run_cleaner():
                 log.info(
                     f"   💀 Estación totalmente vacía eliminada: {station_dir.name}"
                 )
-            except:
+            except Exception as e:
+                log.error(f"   ❌ Error borrando estación: {e}")
                 pass
 
     log.info("✨ LIMPIEZA COMPLETADA ✨")

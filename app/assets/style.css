@@ -1,0 +1,60 @@
+/* Import Google Font (Inter) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Hide Streamlit Default Elements */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* Custom Metric Cards */
+div[data-testid="metric-container"] {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+div[data-testid="metric-container"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: #7C3AED;
+}
+
+/* Typography */
+h1 {
+    color: #1E293B;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em;
+}
+
+h2, h3 {
+    color: #334155;
+    font-weight: 600 !important;
+}
+
+/* Elegant Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #F1F5F9;
+    border-right: 1px solid #E2E8F0;
+}
+
+/* Custom Buttons */
+.stButton button {
+    background-color: #7C3AED;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.stButton button:hover {
+    background-color: #6D28D9;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}

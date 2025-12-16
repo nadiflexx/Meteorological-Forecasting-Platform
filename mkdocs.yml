@@ -1,0 +1,20 @@
+site_name: Rainbow AI Documentation
+site_description: Technical documentation for the Meteorological Prediction System.
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: deep-purple
+    accent: teal
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+
+nav:
+  - 🏠 Home: index.md
+  - 🏗️ Architecture: architecture.md
+  - ⚙️ Data Pipelines: pipelines.md
+  - 🖥️ App & Frontend: app_structure.md
+  - 🧠 Logic & AI Models: logic.md
+  - 📊 Results & Metrics: results.md
