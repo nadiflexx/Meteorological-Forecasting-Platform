@@ -14,8 +14,18 @@ name = "rainbow-ai-predictor"
 description = "End-to-End ML System to predict rainbow probabilities using AEMET meteorological data."
 version = "1.0.0"
 readme = "README.md"
-authors = [{ name = "Nadeem", email = "alu2019213@365.stucom.com" }]
-maintainers = [{ name = "Nadeem", email = "alu2019213@365.stucom.com" }]
+license = "MIT"
+authors = [
+    { name = "Nadeem", email = "alu2019213@365.stucom.com" },
+    { name = "Albert", email = "pl2025135@365.stucom.com" },
+    { name = "Joan Albert", email = "pl2023357@365.stucom.com" },
+]
+
+maintainers = [
+    { name = "Nadeem", email = "alu2019213@365.stucom.com" },
+    { name = "Albert", email = "pl2025135@365.stucom.com" },
+    { name = "Joan Albert", email = "pl2023357@365.stucom.com" },
+]
 requires-python = ">=3.12"
 dependencies = [
     # Core
@@ -24,7 +34,7 @@ dependencies = [
     "pandas>=2.3.3",
     "python-dotenv",
     "requests>=2.32.5",
-    "joblib>=1.3.2", # Para guardar/cargar modelos .pkl
+    "joblib>=1.3.2",    # Para guardar/cargar modelos .pkl
     # Machine Learning
     "scikit-learn>=1.7.2",
     "lightgbm>=4.6.0",
@@ -32,7 +42,7 @@ dependencies = [
     "seaborn>=0.13.2",
     # Frontend & Viz
     "streamlit>=1.32.0", # Interfaz Web
-    "plotly>=5.19.0", # Gráficos interactivos
+    "plotly>=5.19.0",    # Gráficos interactivos
     # Utils & Legacy (Mantenidos de tu config original)
     "gitpython",
     "pyyaml>=6.0.3",
@@ -40,7 +50,7 @@ dependencies = [
     "aiofiles>=24.1.0",
     "httpx>=0.28.1",
     "uvicorn>=0.37.0",
-    "fastapi>=0.117.1", # Mantenido por si haces API futura
+    "fastapi>=0.117.1",          # Mantenido por si haces API futura
     "nltk>=3.9.2",
     "librosa>=0.11.0",
     "openpyxl>=3.1.5",

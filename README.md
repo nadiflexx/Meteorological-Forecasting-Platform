@@ -1,9 +1,9 @@
 # 🌈 Rainbow AI: Meteorological Prediction System
 
-![Python](https://img.shields.io/badge/Python-3.12%2B-blue)
+![Python](https://img.shields.io/badge/Python-3.13%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)
 ![ML](https://img.shields.io/badge/ML-LightGBM-green)
-![Status](https://img.shields.io/badge/Status-Production-success)
+![Status](https://img.shields.io/badge/Status-In%20Development-success)
 
 **Rainbow AI** is an End-to-End Machine Learning system designed to forecast complex meteorological conditions in Catalonia.
 
@@ -23,65 +23,113 @@ This README provides a quick overview. For a deep dive into the architecture, ph
 
 The project follows a **Modular Layered Architecture**, separating logic (`src`) from execution (`pipelines`) and presentation (`app`).
 
-```text
-METEOROLOGICAL-PREDICTION-SYSTEM/
-├── 📂 app/               # Presentation Layer (Streamlit Dashboard)
-├── 📂 pipelines/         # Execution Orchestrators (Ingest -> Process -> Train)
-├── 📂 src/               # Backend Core Logic
-│   ├── config/           # Single Source of Truth (Settings)
-│   ├── etl/              # Data Engineering (AEMET + Open-Meteo)
-│   ├── features/         # Feature Engineering (Lags, Rolling, Cyclical)
-│   └── modeling/         # Machine Learning Trainers (LightGBM)
-└── 📂 docs/              # Technical Documentation
-🚀 Key Features
-🌈 Rainbow Heuristic: A probabilistic score derived from Rain, Sunshine, and Humidity predictions.
-🌧️ Rain Classifier: A robust LightGBM model that uses Pressure Trends to detect incoming storms (AUC 0.73).
-🔌 Resilient ETL: Handles API rate limits (429), connection pooling, and atomic file writing.
-📊 Interactive Dashboard: A professional UI to visualize forecasts and audit model performance.
-🛠️ Quick Start
-1. Installation
-Clone the repo and install dependencies:
+---
 
-Bash
+## 📁 Project Structure
 
-git clone https://github.com/your-username/rainbow-ai.git
-cd rainbow-ai
-uv sync
-2. Configuration
-Create a .env file in the root directory:
+    METEOROLOGICAL-PREDICTION-SYSTEM/
+    ├── 📂 app/               # Presentation Layer (Streamlit Dashboard)
+    ├── 📂 pipelines/         # Execution Orchestrators (Ingest → Process → Train)
+    ├── 📂 src/               # Backend Core Logic
+    │   ├── config/           # Single Source of Truth (Settings)
+    │   ├── etl/              # Data Engineering (AEMET + Open-Meteo)
+    │   ├── features/         # Feature Engineering (Lags, Rolling, Cyclical)
+    │   └── modeling/         # Machine Learning Trainers (LightGBM)
+    └── 📂 docs/              # Technical Documentation
 
-env
+---
 
-AEMET_API_KEY="your_api_key_here"
-3. Execution Flow (The Pipelines)
-You must run these in order to build the dataset:
+## 🚀 Key Features
 
-Bash
+- 🌈 **Rainbow Heuristic**  
+  Probabilistic score derived from rain, sunshine, and humidity predictions.
 
-# 1. Download raw data (AEMET 2009-2025)
-uv run pipelines/01_ingest_data.py
+- 🌧️ **Rain Classifier**  
+  Robust LightGBM model using pressure trends to detect incoming storms  
+  _(ROC-AUC: 0.73)_.
 
-# 2. Clean, merge Open-Meteo physics & impute gaps
-uv run pipelines/02_process_data.py
+- 🔌 **Resilient ETL**  
+  Handles API rate limits (429), connection pooling, and atomic file writing.
 
-# 3. Train ML models & generate Forecasts
-uv run pipelines/03_train_model.py
-4. Launch App
-Bash
+- 📊 **Interactive Dashboard**  
+  Professional UI to visualize forecasts and audit model performance.
 
-uv run streamlit run app/main.py
-📊 Performance & Results
-Metrics obtained from the Test Set (2023-2025):
+---
 
-Target	Model Type	Metric	Performance
-Precipitation	Classifier	ROC-AUC	0.73 (Robust)
-Temperature	Regressor	MAE	1.18 °C (Excellent)
-Wind Speed	Regressor	MAE	0.52 m/s (Excellent)
-Humidity	Regressor	MAE	~7.6 % (Acceptable)
-🌈 Prediction Example
-Date: 2025-03-08
-Station: Fogars de Montclús
-Probability: 81.3%
-Scenario: High Rain probability (70%) combined with sun breaks (6.4h) and high humidity.
-Author: Nadeem | License: MIT
-```
+## 🛠️ Quick Start
+
+### 1️⃣ Installation
+
+Clone the repository and install dependencies:
+
+    git clone https://github.com/your-username/rainbow-ai.git
+    cd rainbow-ai
+    uv sync
+
+---
+
+### 2️⃣ Configuration
+
+Create a `.env` file in the root directory:
+
+    AEMET_API_KEY="your_api_key_here"
+
+---
+
+### 3️⃣ Execution Flow (Pipelines)
+
+Run the pipelines in order:
+
+    # 1. Download raw data (AEMET 2009–2025)
+    uv run pipelines/01_ingest_data.py
+
+    # 2. Clean, merge Open-Meteo physics & impute gaps
+    uv run pipelines/02_process_data.py
+
+    # 3. Train ML models & generate forecasts
+    uv run pipelines/03_train_model.py
+
+---
+
+### 4️⃣ Launch Application
+
+    uv run streamlit run app/main.py
+
+---
+
+## 📊 Performance & Results
+
+Metrics obtained from the test set (2023–2025):
+
+| Target        | Model Type | Metric  | Performance          |
+| ------------- | ---------- | ------- | -------------------- |
+| Precipitation | Classifier | ROC-AUC | 0.73 (Robust)        |
+| Temperature   | Regressor  | MAE     | 1.18 °C (Excellent)  |
+| Wind Speed    | Regressor  | MAE     | 0.52 m/s (Excellent) |
+| Humidity      | Regressor  | MAE     | ~7.6 % (Acceptable)  |
+
+---
+
+## 🌈 Prediction Example
+
+- **Date:** 2025-03-08
+- **Station:** Fogars de Montclús
+- **Probability:** 81.3%
+
+**Scenario:**  
+High rain probability (70%) combined with sun breaks (6.4 h) and high humidity.
+
+---
+
+## 👥 Authors
+
+- Nadeem Rashid
+- Albert Grau
+- Joan Albert Chias
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.  
+See the `LICENSE` file for details.
