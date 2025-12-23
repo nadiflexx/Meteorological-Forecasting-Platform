@@ -25,9 +25,7 @@ def plot_rainbow_gauge(probability: float) -> go.Figure:
             },
             gauge={
                 "axis": {"range": [0, 100], "tickwidth": 1, "tickcolor": "white"},
-                "bar": {
-                    "color": "rgba(0,0,0,0)"
-                },  # Invisible bar, we use the needle logic via threshold
+                "bar": {"color": "rgba(0,0,0,0)"},
                 "bgcolor": "white",
                 "borderwidth": 2,
                 "bordercolor": "white",
@@ -99,7 +97,7 @@ def plot_weekly_temperature_trend(df_week: pd.DataFrame) -> go.Figure:
     """
     fig = go.Figure()
 
-    # 1. Max Temp Line (Invisible line for filling)
+    # 1. Max Temp Line
     fig.add_trace(
         go.Scatter(
             x=df_week["fecha_dt"],
@@ -111,21 +109,21 @@ def plot_weekly_temperature_trend(df_week: pd.DataFrame) -> go.Figure:
         )
     )
 
-    # 2. Min Temp Line (Fill area between Min and Max)
+    # 2. Min Temp Line
     fig.add_trace(
         go.Scatter(
             x=df_week["fecha_dt"],
             y=df_week["pred_tmin"],
             mode="lines",
             line={"width": 0},
-            fill="tonexty",  # Fills to the previous trace (Max)
+            fill="tonexty",
             fillcolor="rgba(255, 165, 0, 0.15)",
             name="Temp Range",
             hoverinfo="skip",
         )
     )
 
-    # 3. Average Temp Line (The main visual)
+    # 3. Average Temp Line
     fig.add_trace(
         go.Scatter(
             x=df_week["fecha_dt"],
@@ -145,12 +143,11 @@ def plot_weekly_temperature_trend(df_week: pd.DataFrame) -> go.Figure:
     fig.add_trace(
         go.Bar(
             x=df_week["fecha_dt"],
-            y=df_week["prob_rain"]
-            * 5,  # Scaled for visual representation alongside temp
+            y=df_week["prob_rain"] * 5,
             name="Rain Prob (Scaled)",
             marker_color="#3B82F6",
             opacity=0.3,
-            hoverinfo="skip",  # Purely visual
+            hoverinfo="skip",
         )
     )
 
@@ -161,7 +158,7 @@ def plot_weekly_temperature_trend(df_week: pd.DataFrame) -> go.Figure:
         margin={"t": 20, "b": 20, "l": 40, "r": 20},
         xaxis={
             "showgrid": False,
-            "tickformat": "%a %d",  # Mon 01
+            "tickformat": "%a %d",
         },
         yaxis={
             "showgrid": True,

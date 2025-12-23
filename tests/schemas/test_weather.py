@@ -11,15 +11,14 @@ def test_valid_weather_record():
         "nombre": "Barcelona",
         "provincia": "Barcelona",
         "tmed": 15.5,
-        "prec": "0,0",  # String español
+        "prec": "0,0",
     }
     record = WeatherRecord(**data)
     assert record.tmed == 15.5
-    assert record.prec == 0.0  # Debe convertir la coma a float
+    assert record.prec == 0.0
 
 
 def test_ip_precipitation():
-    # "Ip" significa Inapreciable -> debe ser 0.0
     data = {
         "fecha": "2024-01-01",
         "indicativo": "TEST",

@@ -5,7 +5,6 @@ from src.features.physics import PhysicsEngine
 
 
 def test_relative_humidity_calculation():
-    # Caso: T = 20°C, Td = 20°C -> HR debe ser 100%
     temp = pd.Series([20.0])
     dew = pd.Series([20.0])
 
@@ -14,7 +13,6 @@ def test_relative_humidity_calculation():
 
 
 def test_relative_humidity_dry():
-    # Caso: T = 30°C, Td = 10°C -> HR debe ser baja (~28%)
     temp = pd.Series([30.0])
     dew = pd.Series([10.0])
 
@@ -23,7 +21,6 @@ def test_relative_humidity_dry():
 
 
 def test_vpd_calculation():
-    # VPD debe ser positivo si T > Td
     temp = pd.Series([25.0])
     dew = pd.Series([15.0])
 

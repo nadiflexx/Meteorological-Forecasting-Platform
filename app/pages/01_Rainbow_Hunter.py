@@ -10,6 +10,8 @@ import pandas as pd
 import streamlit as st
 from utils.data_loader import apply_custom_css, load_rainbow_predictions
 
+from src.config.settings import STATION_COORDS
+
 # ---------------------------------------------------------------------
 # PAGE CONFIG
 # ---------------------------------------------------------------------
@@ -38,6 +40,16 @@ if df is None:
     )
     st.stop()
 
+
+# Auxiliar function to set the select label with format ID + " " + "Station_name"
+def format_station_label(station_id):
+    # Check the dictionary
+    info = STATION_COORDS.get(station_id)
+    if info:
+        return f"{station_id} {info['name']}"
+    return station_id
+
+
 # ---------------------------------------------------------------------
 # SIDEBAR CONFIGURATION
 # ---------------------------------------------------------------------
@@ -46,7 +58,11 @@ with st.sidebar:
 
     # 1. Station selection
     stations = sorted(df["indicativo"].unique())
-    selected_station = st.selectbox("Weather Station", stations)
+    selected_station = st.selectbox(
+        "Weather Station",
+        stations,
+        format_func=format_station_label,
+    )
 
     df_station = df[df["indicativo"] == selected_station].copy()
 
@@ -65,7 +81,7 @@ with st.sidebar:
     else:
         available_dates = sorted(df_future["fecha_date"].unique(), reverse=True)
 
-    # 3. Date selector (ONLY dates, no time)
+    # 3. Date selector
     today = date.today()
     default_index = 0
 

@@ -9,10 +9,8 @@ from src.modeling.trainers.rain import RainClassifier
 from src.modeling.trainers.temperature import TemperatureModel
 
 
-# Fixture con más datos para evitar vacíos
 @pytest.fixture
 def training_data():
-    # 20 días en total: 10 en 2022 (Train), 10 en 2023 (Test)
     dates = pd.date_range("2022-12-25", periods=20)
     return pd.DataFrame(
         {
@@ -28,13 +26,12 @@ def training_data():
             "sol": [5] * 20,
             "tmed": [15] * 20,
             "tmin": [10] * 20,
-            "tmax": [20] * 20,  # Necesario para temperature
+            "tmax": [20] * 20,
             "dir": [90] * 20,
         }
     )
 
 
-# Helper para mocks dinámicos
 def mock_predict(X, *args, **kwargs):
     return np.array([0.5] * len(X))
 
@@ -86,5 +83,4 @@ def test_temperature_regressor_flow(mock_dump, mock_lgb_train, training_data):
         results = trainer.run_training()
 
     assert "pred_tmed" in results.columns
-    # Debe entrenar 3 modelos (tmed, tmin, tmax)
     assert mock_lgb_train.call_count == 3

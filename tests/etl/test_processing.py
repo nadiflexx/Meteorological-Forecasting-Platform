@@ -16,7 +16,7 @@ def raw_df():
             "nombre": ["Station A"] * 3,
             "provincia": ["Barcelona"] * 3,
             "altitud": [10] * 3,
-            "tmed": [15.0, np.nan, 16.0],  # Hueco para interpolar
+            "tmed": [15.0, np.nan, 16.0],
             "prec": [0.0, np.nan, 0.0],
         }
     )
@@ -24,24 +24,16 @@ def raw_df():
 
 @patch("src.etl.processing.OpenMeteoClient")
 def test_processing_logic(mock_om_client, raw_df):
-    # Mockear OpenMeteo para que no devuelva nada y probar solo la lógica interna
     mock_om_client.return_value.fetch_solar_data.return_value = pd.DataFrame()
 
     processor = WeatherProcessor()
 
-    # Inyectamos el proceso saltándonos la carga de disco
-    # (Testeamos process_stations_logic pasando el DF directamente)
-    # Nota: process_stations_logic espera un DF global y filtra dentro.
-
-    # Simulamos settings.STATIONS para que "TEST" sea válido
     with (
         patch("src.etl.processing.STATIONS", {"TEST": "Station A"}),
         patch("src.etl.processing.STATION_COORDS", {"TEST": {"lat": 0, "lon": 0}}),
     ):
         result_df = processor.process_stations_logic(raw_df)
 
-    # Validaciones
     assert not result_df.empty
-    # Verificar interpolación de tmed
-    assert result_df.iloc[1]["tmed"] == 15.5  # Media entre 15 y 16
-    assert result_df.iloc[1]["tmed_est"] == 1  # Flag de estimado activado
+    assert result_df.iloc[1]["tmed"] == 15.5
+    assert result_df.iloc[1]["tmed_est"] == 1

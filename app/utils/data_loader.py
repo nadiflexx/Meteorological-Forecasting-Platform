@@ -11,7 +11,6 @@ from src.config.settings import Paths
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rainbow_predictions() -> pd.DataFrame | None:
-    # Usamos Paths.PREDICTIONS, si cambia en settings, cambia aquí solo
     file_path = Paths.PREDICTIONS / "rainbow_forecast_final.csv"
 
     if not file_path.exists():
@@ -36,7 +35,6 @@ def load_evaluation_data(filename: str) -> pd.DataFrame | None:
 
 
 def apply_custom_css() -> None:
-    # Usamos Paths.ASSETS
     css_path = Paths.ASSETS / "style.css"
     if css_path.exists():
         with open(css_path, encoding="utf-8") as f:

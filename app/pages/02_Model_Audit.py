@@ -78,7 +78,6 @@ with tab3:
     col_metrics, col_info = st.columns([1, 2])
 
     with col_metrics:
-        # Note: Ideally these metrics should be loaded from a JSON file generated during training
         st.metric("Accuracy", "79.0%", help="Total percentage of correct predictions")
         st.metric("ROC-AUC", "0.74", help="Distinction capability")
         st.metric("Decision Threshold", "50%")

@@ -7,13 +7,10 @@ from components.charts import plot_weekly_temperature_trend
 from components.maps import render_forecast_map
 import pandas as pd
 import streamlit as st
-
-# Custom Components & Utils
 from utils.data_loader import apply_custom_css, load_rainbow_predictions
 
 from src.config.settings import STATION_COORDS
 
-# Page Configuration
 st.set_page_config(page_title="Weather Forecast", page_icon="🌦️", layout="wide")
 apply_custom_css()
 
@@ -46,7 +43,7 @@ if df is None:
 df["fecha_dt"] = pd.to_datetime(df["fecha"])
 today = pd.to_datetime("today").normalize()
 
-# Simulation Logic: If we are in 2024 but data is 2025, adjust "today"
+# Simulation Logic
 min_data_date = df["fecha_dt"].min()
 if today < min_data_date:
     today = min_data_date
@@ -98,10 +95,10 @@ cols = st.columns(len(df_week))
 
 for i, (_, day_row) in enumerate(df_week.iterrows()):
     with cols[i]:
-        day_label = day_row["fecha_dt"].strftime("%a %d")  # e.g. Mon 15
+        day_label = day_row["fecha_dt"].strftime("%a %d")
         icon = _get_weather_emoji(day_row)
 
-        # HTML Card using Streamlit Markdown
+        # HTML Card
         st.markdown(
             f"""
             <div style="
@@ -171,7 +168,6 @@ with st.expander(
         )
 
     with col2:
-        # Check if dew point exists (it should with the new model)
         dew_point_info = ""
         if "pred_punto_rocio" in detail_row:
             dew_point_info = f"- **Dew Point:** {detail_row['pred_punto_rocio']:.1f} °C"
