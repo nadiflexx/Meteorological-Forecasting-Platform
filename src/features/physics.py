@@ -17,7 +17,6 @@ class PhysicsEngine:
         Args:
             temp_series: Temperature in Celsius.
         """
-        # Constants for water (-40 to 50 °C)
         a = 17.625
         b = 243.04
         return 6.1094 * np.exp((a * temp_series) / (b + temp_series))
@@ -53,7 +52,6 @@ class PhysicsEngine:
         es = PhysicsEngine.calculate_saturation_vapor_pressure(temp_series)
         ea = PhysicsEngine.calculate_vapor_pressure(dew_point_series)
 
-        # Avoid division by zero (though Es shouldn't be 0)
         hr = 100 * (ea / es)
         return hr.clip(0, 100)
 

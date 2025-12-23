@@ -6,13 +6,13 @@ Performance metrics obtained from the Test Set (2023-2025).
 
 | Variable                 | Metric  | Value        | Evaluation                                                                  |
 | :----------------------- | :------ | :----------- | :-------------------------------------------------------------------------- |
-| **Rain (Precipitation)** | ROC-AUC | **0.731**    | ✅ **Robust.** Good discrimination between dry and wet days.                |
-| **Temperature (Avg)**    | MAE     | **1.17 °C**  | 🚀 **Excellent.** Very high precision.                                      |
-| **Temperature (Min)**    | MAE     | **1.26 °C**  | ✅ **Very Good.**                                                           |
-| **Temperature (Max)**    | MAE     | **1.63 °C**  | ✅ **Good.** Max temp is harder due to local heat bursts.                   |
+| **Rain (Precipitation)** | ROC-AUC | **0.72**     | ✅ **Robust.** Good discrimination between dry and wet days.                |
+| **Temperature (Avg)**    | MAE     | **1.19 °C**  | 🚀 **Excellent.** Very high precision.                                      |
+| **Temperature (Min)**    | MAE     | **1.28 °C**  | ✅ **Very Good.**                                                           |
+| **Temperature (Max)**    | MAE     | **1.65 °C**  | ✅ **Good.** Max temp is harder due to local heat bursts.                   |
 | **Wind Speed**           | MAE     | **0.52 m/s** | 🚀 **Excellent.**                                                           |
-| **Solar Radiation**      | MAE     | **1.46 h**   | ⚠️ **Acceptable.** Hard to predict exact hours due to cloud variability.    |
-| **Relative Humidity**    | MAE     | **~7.6 %**   | ⚠️ **Acceptable.** Humidity is volatile. The model captures the trend well. |
+| **Solar Radiation**      | MAE     | **1.53 h**   | ⚠️ **Acceptable.** Hard to predict exact hours due to cloud variability.    |
+| **Relative Humidity**    | MAE     | **~7.7 %**   | ⚠️ **Acceptable.** Humidity is volatile. The model captures the trend well. |
 
 ## 📝 Interpretation
 

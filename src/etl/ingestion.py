@@ -1,6 +1,9 @@
 """
 Data Ingestion Logic.
-Manages saving partial JSONs and consolidating them by year.
+
+Manages the lifecycle of persistent storage for raw data, handling
+atomic writes of partial batches and their eventual consolidation
+into unified yearly datasets.
 """
 
 import json
@@ -12,17 +15,32 @@ from src.utils.logger import log
 
 
 class DataIngestion:
+    """
+    Handles file system operations for the ETL Ingestion phase.
+
+    This class ensures that data downloaded in chunks is safely stored
+    to disk immediately (to prevent data loss on crash) and later
+    merged into a clean, chronological structure.
+    """
+
     def __init__(self):
         if not Paths.RAW.exists():
             Paths.RAW.mkdir(parents=True)
 
     def _sanitize_name(self, name):
-        """Clean folder names"""
+        """
+        Sanitizes strings to be filesystem-safe.
+        Removes special characters and replaces spaces with underscores.
+        """
         clean = re.sub(r"[^\w\s-]", "", name)
         clean = re.sub(r"[\s]+", "_", clean)
         return clean
 
     def _get_station_year_folder(self, station_code, station_name, year):
+        """
+        Generates and creates the hierarchical directory path.
+        Structure: data/raw/Station_{ID}_{Name}/{Year}/
+        """
         clean_name = self._sanitize_name(station_name)
         folder_name = f"Station_{station_code}_{clean_name}"
 
@@ -37,6 +55,19 @@ class DataIngestion:
         return year_path
 
     def save_partial_data(self, data, start_date, end_date, station_code, station_name):
+        """
+        Writes a partial batch of data to disk (JSON).
+
+        It uses `os.fsync` to ensure physical write durability, preventing
+        data corruption in case of sudden system failure or interruption.
+
+        Args:
+            data (list): List of dictionary records.
+            start_date (datetime): Start of the batch.
+            end_date (datetime): End of the batch.
+            station_code (str): Unique station ID.
+            station_name (str): Human-readable name.
+        """
         year = start_date.year
         folder = self._get_station_year_folder(station_code, station_name, year)
 
@@ -47,7 +78,6 @@ class DataIngestion:
 
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
-            # FORCE WRITE TO DISK (Safety for consolidation)
             f.flush()
             os.fsync(f.fileno())
 
@@ -55,7 +85,19 @@ class DataIngestion:
 
     def consolidate_year(self, year, station_code, station_name):
         """
-        Joins partials, SORTS BY DATE, removes duplicates, and saves.
+        Merges all partial JSON fragments for a specific year into a single master file.
+
+        Key operations:
+        1. Reads all `part_*.json` files.
+        2. Deduplicates records based on date.
+        3. Sorts records chronologically.
+        4. Saves the result as `data_{year}.json`.
+        5. Deletes the temporary partial files.
+
+        Args:
+            year (int): The year to consolidate.
+            station_code (str): Station ID.
+            station_name (str): Station Name.
         """
         folder = self._get_station_year_folder(station_code, station_name, year)
 
@@ -85,7 +127,7 @@ class DataIngestion:
         if not all_records:
             return
 
-        # 1. REMOVE DUPLICATES (Dictionary trick by date)
+        # 1. REMOVE DUPLICATES
         unique_records = {item["fecha"]: item for item in all_records}
         cleaned_list = list(unique_records.values())
 
@@ -106,7 +148,7 @@ class DataIngestion:
                 f"✨ CONSOLIDATED: {final_filename} ({len(cleaned_list)} ordered days)"
             )
 
-            # 4. Cleanup Partials
+            # 4. Cleanup
             for p_file in files_processed:
                 try:
                     p_file.unlink()

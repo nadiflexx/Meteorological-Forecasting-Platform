@@ -41,7 +41,7 @@ class Paths:
             path.mkdir(parents=True, exist_ok=True)
 
 
-# Ejecutar creación de directorios al importar
+# Execute directory creation to avoid crash
 Paths.make_dirs()
 
 
@@ -51,8 +51,6 @@ class APIs:
     # AEMET
     AEMET_KEY = os.getenv("AEMET_API_KEY")
     if not AEMET_KEY:
-        # Warning en lugar de error fatal para que la App funcione (solo visualización)
-        # aunque el pipeline de entrenamiento falle.
         print("⚠️ WARNING: AEMET_API_KEY not found in .env")
 
     AEMET_URL = (
@@ -87,7 +85,32 @@ class StationData(TypedDict):
 
 # Main Dictionary: Code -> Legible name
 STATIONS: dict[str, str] = {
+    "0252D": "Arenys De Mar",
+    "0106X": "Balsareny",
+    "0201D": "Barcelona",
+    "0076": "Barcelona Aeropuerto",
+    "0200E": "Barcelona, Fabra",
+    "0201X": "Barcelona, Museo Marítimo",
+    "0092X": "Berga",
+    "0222X": "Caldes De Montbui",
+    "0194D": "Corbera, Pic D'Agulles",
+    "0260X": "Fogars De Montclús",
     "0171X": "Igualada",
+    "0149X": "Manresa",
+    "0149D": "Manresa (La Culla)",
+    "0120X": "Moià",
+    "0158X": "Monistrol De Montserrat",
+    "0158O": "Montserrat",
+    "0061X": "Pontons",
+    "0114X": "Prats De Lluçanès",
+    "0229I": "Sabadell Aeropuerto",
+    "0349": "Sant Julià De Vilatorta",
+    "0255B": "Santa Susanna",
+    "0073X": "Sitges",
+    "0341X": "Tona",
+    "0341": "Tona (Escola)",
+    "0066X": "Vilafranca Del Penedès",
+    "0244X": "Vilassar De Dalt",
 }
 
 # Metada detailed (Used by  ETL and for App Map)

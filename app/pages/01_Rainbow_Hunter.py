@@ -117,17 +117,23 @@ with col_main:
 
     prob = row["rainbow_prob"]
 
+    # --- CORRECCIÓN AQUÍ ---
+    # Usamos f-strings (f"...") para mostrar el valor numérico de {prob}
     if prob >= 60:
         st.success(
-            "### 🚀 HIGH PROBABILITY!\n"
+            f"### 🚀 HIGH PROBABILITY ({prob}%)!\n"
             "Expect showers with sun breaks. **Get your camera ready!**"
         )
     elif prob >= 30:
         st.warning(
-            "### ⛅ MEDIUM PROBABILITY\nUnstable conditions. A sighting is possible."
+            f"### ⛅ MEDIUM PROBABILITY ({prob}%)\n"
+            "Unstable conditions. A sighting is possible."
         )
     else:
-        st.info("### 💤 LOW PROBABILITY\nSky is either too clear or too overcast.")
+        st.info(
+            f"### 💤 LOW PROBABILITY ({prob}%)\n"
+            "Sky is either too clear or too overcast."
+        )
 
 # ---------------------------------------------------------------------
 # METRICS PANEL

@@ -62,8 +62,13 @@ The project follows a **Modular Layered Architecture**, separating logic (`src`)
 
 Clone the repository and install dependencies:
 
-    git clone https://github.com/your-username/rainbow-ai.git
-    cd rainbow-ai
+    git clone https://github.com/nadiflexx/Meteorological-Forecasting-Platform.git
+    # Windows
+    python -m venv venv
+    .\venv\Scripts\activate
+
+    # Mac/Linux
+    python3 -m venv venv
     uv sync
 
 ---
@@ -104,9 +109,9 @@ Metrics obtained from the test set (2023–2025):
 | Target        | Model Type | Metric  | Performance          |
 | ------------- | ---------- | ------- | -------------------- |
 | Precipitation | Classifier | ROC-AUC | 0.73 (Robust)        |
-| Temperature   | Regressor  | MAE     | 1.18 °C (Excellent)  |
+| Temperature   | Regressor  | MAE     | 1.19 °C (Excellent)  |
 | Wind Speed    | Regressor  | MAE     | 0.52 m/s (Excellent) |
-| Humidity      | Regressor  | MAE     | ~7.6 % (Acceptable)  |
+| Humidity      | Regressor  | MAE     | ~7.7 % (Acceptable)  |
 
 ---
 

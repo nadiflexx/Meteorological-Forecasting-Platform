@@ -1,11 +1,15 @@
 """
+PIPELINE 02: DATA PROCESSING
+----------------------------
 Data Processing Engine.
 
 Handles the transformation of raw JSON data into a clean, physics-enriched dataset.
+
 Core responsibilities:
-1. Loading & Validation (Pydantic).
-2. Data Fusion (AEMET + Open-Meteo).
-3. Missing Value Imputation (Interpolation + Climatology).
+1. Loading & Validation: Enforces schema integrity using Pydantic.
+2. Quality Control: Filters out stations with poor data coverage (<85%).
+3. Data Fusion: Merges official AEMET records with Open-Meteo reanalysis data.
+4. Imputation: Fills missing values using a hybrid strategy (Linear Interpolation + Climatology).
 """
 
 import json
@@ -22,6 +26,13 @@ from src.utils.logger import log
 
 
 class WeatherProcessor:
+    """
+    Orchestrator class for the Data Processing (ETL Phase 2).
+
+    It manages the lifecycle of transforming raw, fragmented JSON files
+    into a single, high-quality CSV dataset ready for Machine Learning.
+    """
+
     def __init__(self):
         self.raw_dir = Paths.RAW
         self.processed_dir = Paths.PROCESSED
@@ -38,7 +49,14 @@ class WeatherProcessor:
 
     def load_and_validate(self) -> pd.DataFrame:
         """
-        Loads raw JSON files and validates schema using Pydantic.
+        Ingests raw JSON artifacts and enforces schema validation.
+
+        Iterates through the `data/raw` directory, parsing every JSON file against
+        the `WeatherRecord` Pydantic schema. Corrupt records or those falling
+        outside the target date range are discarded.
+
+        Returns:
+            pd.DataFrame: A raw dataframe containing only valid records.
         """
         log.info("📂 Loading and validating raw data...")
         valid_records = []
@@ -74,7 +92,17 @@ class WeatherProcessor:
 
     def filter_bad_stations(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Removes stations with insufficient data coverage (<85%).
+        Performs Quality Control (QC) based on temporal coverage.
+
+        Calculates the ratio of present days vs. expected days for each station.
+        Stations with less than 85% coverage are deemed unreliable for ML
+        and are removed from the dataset.
+
+        Args:
+            df (pd.DataFrame): The validated dataframe.
+
+        Returns:
+            pd.DataFrame: The dataframe filtered by station quality.
         """
         log.info("🛡️ Filtering incomplete stations...")
 
@@ -89,7 +117,23 @@ class WeatherProcessor:
 
     def process_stations_logic(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Core logic: Merges AEMET data with Open-Meteo physics and handles imputation.
+        The core transformation engine. Merges sources and imputes missing values.
+
+        Workflow per station:
+        1.  **Reindexing**: Generates a continuous daily timeline, creating explicit
+            NaN rows for missing dates.
+        2.  **Data Fusion**: Queries Open-Meteo for physical variables missing in
+            AEMET data (Solar Radiation, Pressure, Cloud Cover).
+        3.  **Hybrid Imputation**:
+            - **Linear Interpolation**: For short gaps (<= 7 days) to preserve trends.
+            - **Climatological Mean**: For long gaps, uses the historical average
+              of that specific day (Day-of-Year mean) to preserve seasonality.
+
+        Args:
+            df (pd.DataFrame): The filtered dataframe.
+
+        Returns:
+            pd.DataFrame: A fully dense, enriched dataframe.
         """
         log.info("🧩 Merging Physics Data & Imputing Missing Values...")
 
@@ -166,7 +210,7 @@ class WeatherProcessor:
                         on="fecha",
                         how="left",
                     )
-                time.sleep(0.5)  # Polite delay
+                time.sleep(0.5)
 
             # 4. Hybrid Rain Imputation
             # Use Open-Meteo rain ('om_prec') to fill AEMET gaps
@@ -223,7 +267,16 @@ class WeatherProcessor:
         return pd.concat(df_list, ignore_index=True) if df_list else pd.DataFrame()
 
     def audit_data(self, df: pd.DataFrame):
-        """Prints a quality report of the processed dataset."""
+        """
+        Generates a post-processing quality report.
+
+        - Enforces physical bounds (e.g., Humidity cannot be > 100%).
+        - Calculates the percentage of imputed (synthetic) data per variable.
+        - Identifies the worst-quality stations to inform the user.
+
+        Args:
+            df (pd.DataFrame): The fully processed dataframe.
+        """
         log.info("\n📊 === DATA QUALITY AUDIT ===")
 
         # Physical Clips
@@ -258,7 +311,11 @@ class WeatherProcessor:
         log.info(f"\n✅ Finished. Stations: {n_stations}. Rows: {len(df)}")
 
     def execute(self):
-        """Main execution method."""
+        """
+        Main execution method.
+
+        Runs the full pipeline sequence: Load -> Filter -> Process -> Audit -> Save.
+        """
         df = self.load_and_validate()
         df = self.filter_bad_stations(df)
         df = self.process_stations_logic(df)

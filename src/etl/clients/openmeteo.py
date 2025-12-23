@@ -2,7 +2,8 @@
 Open-Meteo API Client.
 
 Handles interaction with the Open-Meteo Historical Archive API to retrieve
-physics-based meteorological data (Solar radiation, Pressure, Dew Point).
+physics-based meteorological data (Solar radiation, Pressure, Dew Point)
+that serves to enrich the primary AEMET dataset.
 """
 
 from datetime import datetime
@@ -20,7 +21,14 @@ from src.utils.logger import log
 
 
 class OpenMeteoClient:
-    """Client for fetching historical weather data from Open-Meteo."""
+    """
+    Client wrapper for fetching historical weather reanalysis data.
+
+    This class abstracts the complexity of the Open-Meteo API, handling:
+    1. Caching (to reduce API load and speed up development).
+    2. Automatic Retries (exponential backoff).
+    3. Parsing binary/numpy responses into Pandas DataFrames.
+    """
 
     def __init__(self):
         # Persistent caching to avoid redundant API calls
@@ -36,21 +44,21 @@ class OpenMeteoClient:
         self, lat: float, lon: float, start_date: datetime, end_date: datetime
     ) -> pd.DataFrame:
         """
-        Retrieves daily weather variables including Solar, Pressure, and Dew Point.
+        Retrieves daily weather variables including Solar Radiation, Pressure, and Clouds.
 
         Args:
-            lat (float): Latitude.
-            lon (float): Longitude.
-            start_date (datetime): Start date.
-            end_date (datetime): End date.
+            lat (float): Latitude of the station.
+            lon (float): Longitude of the station.
+            start_date (datetime): Query start date.
+            end_date (datetime): Query end date.
 
         Returns:
-            pd.DataFrame: DataFrame with columns [fecha, sol, om_prec, presion, nubes]
-                          or empty DataFrame on failure.
+            pd.DataFrame: DataFrame with standardized columns [fecha, sol, om_prec, presion, nubes]
+                          Returns an empty DataFrame if the request fails or dates are invalid.
         """
         today = datetime.now()
 
-        # Safety check: Cannot predict future with archive API
+        # Safety check
         if start_date > today:
             return pd.DataFrame()
 
@@ -58,7 +66,6 @@ class OpenMeteoClient:
         request_end = today if end_date > today else end_date
 
         # Variables to request
-        # Note: 'pressure_msl_mean' is Mean Sea Level Pressure
         daily_vars = [
             "sunshine_duration",
             "precipitation_sum",
@@ -107,7 +114,7 @@ class OpenMeteoClient:
 
                 unix_times = np.arange(start_ts, end_ts, interval, dtype="int64")
 
-                # Safety: Ensure all arrays have same length
+                # Ensure all arrays have same length
                 min_len = min(len(unix_times), len(data_dict["sol"]))
                 unix_times = unix_times[:min_len]
                 for k in data_dict:

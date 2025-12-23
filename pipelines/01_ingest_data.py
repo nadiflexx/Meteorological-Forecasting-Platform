@@ -19,6 +19,31 @@ from src.utils.resilience import fetch_with_retry_logic
 
 
 def run_ingestion():
+    """
+    Orchestrates the complete data ingestion lifecycle (ETL Phase 1).
+
+    This function acts as the main controller for downloading historical data.
+    It iterates through all configured meteorological stations and retrieves data
+    in time-windowed chunks to respect AEMET's API rate limits and payload sizes.
+
+    Workflow:
+    1.  **Environment Setup**: Creates necessary directory structures (raw/partial, raw/yearly).
+    2.  **Station Iteration**: Loops through the stations defined in `STATIONS`.
+    3.  **Time Chunking**: Splits the global date range (2009-2025) into 6-month windows
+        using `relativedelta`. This is critical to avoid API timeouts.
+    4.  **Resilience Wrapper**: Wraps the `client.fetch_data_chunk` call inside
+        `fetch_with_retry_logic`. This applies an exponential backoff strategy
+        to handle HTTP 429 (Too Many Requests) errors automatically.
+    5.  **Incremental Persistence**:
+        - Saves atomic JSON fragments immediately to disk (`save_partial_data`) to prevent data loss.
+        - Triggers `consolidate_year` when a calendar year change is detected, merging
+          fragments into a single yearly file (e.g., `data_2024.json`).
+    6.  **Cleanup**: Runs a final cleaner to remove temporary partial files.
+
+    Side Effects:
+        - Writes raw JSON files to `data/raw/`.
+        - Logs execution progress and errors to `logs/execution.log`.
+    """
     log.info("🚀 STARTING INGESTION PIPELINE (ETL)")
 
     # Ensure environment is ready
@@ -45,7 +70,7 @@ def run_ingestion():
 
             # 2. Year Consolidation Check
             if current_date.year > processed_year:
-                time.sleep(0.5)  # Allow FS to settle
+                time.sleep(0.5)
                 ingestion.consolidate_year(processed_year, code, name)
                 processed_year = current_date.year
 
@@ -63,14 +88,14 @@ def run_ingestion():
             if data:
                 ingestion.save_partial_data(data, current_date, query_end, code, name)
             else:
-                # If resilience returned empty, we log and move on (Gap in data)
+                # If resilience returned empty, we log and move on
                 log.warning(
                     f"⚠️ Gap skipped: {current_date.date()} -> {query_end.date()}"
                 )
 
             # 5. Advance Cursor
             current_date = next_cycle_start
-            time.sleep(0.5)  # Rate limit courtesy
+            time.sleep(0.5)
 
         # Final Cleanup for the station
         time.sleep(0.5)

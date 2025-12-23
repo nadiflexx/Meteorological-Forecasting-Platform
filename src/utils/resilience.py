@@ -40,7 +40,7 @@ def fetch_with_retry_logic(
 
             # Logic: If empty list, maybe transient issue. Retry.
             if attempt < max_retries - 1:
-                wait_time = delay * (2**attempt)  # Exponential backoff: 2, 4, 8...
+                wait_time = delay * (2**attempt)
                 log.warning(
                     f"⚠️ Empty response. Retrying in {wait_time}s... (Attempt {attempt + 1})"
                 )

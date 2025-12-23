@@ -24,7 +24,7 @@ class FeatureEngineer:
     def add_wind_components(df: pd.DataFrame, dir_col: str = "dir") -> pd.DataFrame:
         """Converts wind direction (degrees) to vector components (u, v)."""
         if dir_col in df.columns:
-            # Clean invalid values (99 usually means variable/calm in METAR, mapped to 0 here)
+            # Clean invalid values (99 usually means variable/calm in METAR, mapped to 0)
             clean_dir = df[dir_col].fillna(0).replace(99, 0)
             rads = np.deg2rad(clean_dir)
             df["wind_sin"] = np.sin(rads)

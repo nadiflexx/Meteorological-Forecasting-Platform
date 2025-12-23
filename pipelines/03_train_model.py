@@ -18,6 +18,10 @@ from src.utils.logger import log
 
 
 def consolidate_results(dfs, on_keys: Iterable[str] | None = None):
+    """
+    Utility to merge multiple DataFrames into one.
+    Uses `functools.reduce` to perform an iterative INNER JOIN on the list of DataFrames.
+    """
     if on_keys is None:
         on_keys = ["fecha", "indicativo"]
     return reduce(
@@ -26,6 +30,30 @@ def consolidate_results(dfs, on_keys: Iterable[str] | None = None):
 
 
 def main():
+    """
+    Orchestrates the Machine Learning pipeline (Phase 3).
+
+    This function coordinates the training of specialized models, aggregates their
+    predictions, and applies the business logic to generate the final Rainbow Forecast.
+
+    Workflow:
+    1.  **Input Validation**: Verifies the existence of the cleaned dataset (`weather_dataset_clean.csv`).
+    2.  **Modular Training**: Instantiates and runs distinct trainers for different variable types:
+        - `RainClassifier`: Binary classification (Rain vs No Rain).
+        - `AtmosphereModel`: Regression for Solar Radiation, Humidity, and Wind.
+        - `TemperatureModel`: Regression for Avg, Min, and Max Temperatures.
+    3.  **Data Fusion**: Merges the independent results from the 3 trainers into a single
+        master DataFrame using Date and Station ID as keys.
+    4.  **Heuristic Application**:
+        - Invokes `RainbowCalculator` to process the physical predictions.
+        - Derives the `rainbow_prob` score using the formula: P(Rain) * Sun * Humidity.
+    5.  **Export**:
+        - Filters columns to keep only those required by the Frontend (Streamlit).
+        - Saves the final dataset to `data/predictions/rainbow_forecast_final.csv`.
+
+    Output:
+        A CSV file ready for the Dashboard, containing historical data + future predictions.
+    """
     data_file = Paths.PROCESSED / "weather_dataset_clean.csv"
 
     if not data_file.exists():
@@ -69,22 +97,16 @@ def main():
         "pred_tmin",
     ]
 
-    # --- CORRECCIÓN DEL MERGE ---
-    # Unimos usando SOLO las claves primarias (fecha, indicativo).
-    # 'final_results' ya tiene las probabilidades calculadas.
-    # 'full_preds' tiene las predicciones físicas (tmed, tmax, etc).
     final_df = pd.merge(
         final_results,
         full_preds,
-        on=["fecha", "indicativo"],  # <--- ÚNICAS CLAVES VÁLIDAS
+        on=["fecha", "indicativo"],
         how="left",
-        suffixes=("", "_dup"),  # Por seguridad si hubiera duplicados
+        suffixes=("", "_dup"),
     )
 
-    # Limpiamos columnas duplicadas si las hubiera
     final_df = final_df.loc[:, ~final_df.columns.str.endswith("_dup")]
 
-    # Filtramos columnas finales
     valid_cols = [c for c in cols_to_keep if c in final_df.columns]
 
     output_path = Paths.PREDICTIONS / "rainbow_forecast_final.csv"
@@ -103,7 +125,6 @@ def main():
         "pred_sol",
         "pred_hrMedia",
     ]
-    # Aseguramos que existan para el print
     cols_prev = [c for c in cols_prev if c in final_df.columns]
 
     print("\n🌈 TOP 10 RAINBOW DAYS (TEST SET):")
