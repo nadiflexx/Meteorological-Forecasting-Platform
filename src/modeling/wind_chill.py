@@ -11,8 +11,8 @@ import pandas as pd
 
 
 class WindChillCalculator:
-    """
-    """
+    """ """
+
     def calculate_apparent_temp(self, df_preds: pd.DataFrame) -> pd.DataFrame:
         """
         Computes the 'pred_windchill' column.
@@ -32,34 +32,36 @@ class WindChillCalculator:
             return (h / 100.0) * e_sat
 
         # Inicializamos la columna con la temperatura base
-        df['pred_windchill'] = df['pred_tmed']
+        df["pred_windchill"] = df["pred_tmed"]
 
         # --- CASO 1: WIND CHILL (Frío) ---
-        mask_cold = (df['pred_tmed'] <= 10) & (df['pred_velmedia'] > 4.8)
-        df.loc[mask_cold, 'pred_windchill'] = (
-            13.12 + 0.6215 * df['pred_tmed'] 
-            - 11.37 * (df['pred_velmedia']**0.16) 
-            + 0.3965 * df['pred_tmed'] * (df['pred_velmedia']**0.16)
+        mask_cold = (df["pred_tmed"] <= 10) & (df["pred_velmedia"] > 4.8)
+        df.loc[mask_cold, "pred_windchill"] = (
+            13.12
+            + 0.6215 * df["pred_tmed"]
+            - 11.37 * (df["pred_velmedia"] ** 0.16)
+            + 0.3965 * df["pred_tmed"] * (df["pred_velmedia"] ** 0.16)
         )
 
         # --- CASO 2: HEAT INDEX (Calor) ---
-        mask_hot = (df['pred_tmed'] >= 26)
+        mask_hot = df["pred_tmed"] >= 26
         # Usamos la aproximación de Rothfusz (regresión simplificada)
-        df.loc[mask_hot, 'pred_windchill'] = (
-            -8.784 + 1.611 * df['pred_tmed'] 
-            + 2.338 * df['pred_hrMedia'] 
-            - 0.146 * (df['pred_tmed'] * df['pred_hrMedia'])
+        df.loc[mask_hot, "pred_windchill"] = (
+            -8.784
+            + 1.611 * df["pred_tmed"]
+            + 2.338 * df["pred_hrMedia"]
+            - 0.146 * (df["pred_tmed"] * df["pred_hrMedia"])
         )
 
         # --- CASO 3: STEADMAN (Templado: 10°C < T < 26°C) ---
-        mask_mid = (df['pred_tmed'] > 10) & (df['pred_tmed'] < 26)
+        mask_mid = (df["pred_tmed"] > 10) & (df["pred_tmed"] < 26)
 
-        e = get_vapor_pressure(df['pred_tmed'], df['pred_hrMedia'])
+        e = get_vapor_pressure(df["pred_tmed"], df["pred_hrMedia"])
 
-        df.loc[mask_mid, 'pred_windchill'] = (
-            df['pred_tmed'] + (0.33 * e) - (0.70 * df['pred_velmedia']) - 4.00
+        df.loc[mask_mid, "pred_windchill"] = (
+            df["pred_tmed"] + (0.33 * e) - (0.70 * df["pred_velmedia"]) - 4.00
         )
 
-        df['pred_windchill'] = df['pred_windchill'].round(1)
-        
-        return df['pred_windchill']
+        df["pred_windchill"] = df["pred_windchill"].round(1)
+
+        return df["pred_windchill"]

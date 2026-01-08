@@ -78,7 +78,7 @@ class WeatherRecord(BaseModel):
             try:
                 return float(v_clean)
             except ValueError:
-                # If conversion fails (e.g., corrupt text), return None to avoid crashing the pipeline
+                # If conversion fails return None
                 return None
 
         return None

@@ -105,8 +105,7 @@ class AemetClient:
         retrieve the JSON payload.
         """
         try:
-            time.sleep(0.2)  # Courteous delay
-            # Use session here too
+            time.sleep(0.2)
             res = self.session.get(url, timeout=APIs.TIMEOUT)
 
             if res.status_code == 200:

@@ -58,7 +58,6 @@ class OpenMeteoClient:
         """
         today = datetime.now()
 
-        # Safety check
         if start_date > today:
             return pd.DataFrame()
 
@@ -121,7 +120,6 @@ class OpenMeteoClient:
                     data_dict[k] = data_dict[k][:min_len]
 
                 # Convert to Datetime and adjust for Timezone shift
-                # Adding 6 hours ensures we land on the correct day (avoiding UTC midnight shifts)
                 ts_utc = pd.to_datetime(unix_times, unit="s", utc=True)
                 ts_shifted = ts_utc + pd.Timedelta(hours=6)
                 fechas = ts_shifted.tz_convert(None).normalize()

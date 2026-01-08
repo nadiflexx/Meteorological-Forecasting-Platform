@@ -6,7 +6,7 @@ Single Source of Truth (SSOT) for the entire project.
 from datetime import datetime
 import os
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from dotenv import load_dotenv
 
@@ -17,77 +17,149 @@ load_dotenv()
 class Paths:
     """Centralized management of project file paths."""
 
-    # Resolve Project Root
     ROOT = Path(__file__).resolve().parent.parent.parent
-
-    # Backend / Data Paths
     DATA = ROOT / "data"
     RAW = DATA / "raw"
     PROCESSED = DATA / "processed"
     PREDICTIONS = DATA / "predictions"
-
-    # Model Artifacts
     MODELS = ROOT / "models"
     LOGS = ROOT / "logs"
-
-    # Frontend / App Paths
     APP = ROOT / "app"
     ASSETS = APP / "assets"
 
     @classmethod
     def make_dirs(cls):
-        """Creates critical directories if they don't exist."""
         for path in [cls.RAW, cls.PROCESSED, cls.PREDICTIONS, cls.MODELS, cls.LOGS]:
             path.mkdir(parents=True, exist_ok=True)
 
 
-# Execute directory creation to avoid crash
 Paths.make_dirs()
+
+
+class FileNames:
+    """Centralized file names to avoid magic strings in code."""
+
+    # Input Data
+    CLEAN_DATA = "weather_dataset_clean.csv"
+
+    # Outputs (Predictions)
+    FORECAST_FINAL = "rainbow_forecast_final.csv"
+    FORECAST_ONESTEP = "one_step_forecast_2025.csv"
+    FORECAST_RECURSIVE = "recursive_forecast_2025.csv"
+
+    # Models (Naming convention prefix)
+    MODEL_PREFIX = "lgbm_"
+    MODEL_RAIN = "lgbm_rain_classifier.pkl"
 
 
 class APIs:
     """External Service Configuration."""
 
-    # AEMET
     AEMET_KEY = os.getenv("AEMET_API_KEY")
-    if not AEMET_KEY:
-        print("⚠️ WARNING: AEMET_API_KEY not found in .env")
-
     AEMET_URL = (
         "https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos"
     )
 
-    # Open-Meteo
     OPENMETEO_URL = "https://archive-api.open-meteo.com/v1/archive"
 
-    # Pipeline Throttling
+    # Client settings
     RETRY_DELAY = 70
     TIMEOUT = 30
     RETRIES = 5
+    CACHE_EXPIRE = 3600
 
 
 class PipelineParams:
-    """Data Engineering parameters."""
+    """ETL Data Engineering parameters."""
 
     START_YEAR = 2009
     START_DATE = datetime(2009, 1, 1)
     END_DATE = datetime(2025, 12, 31)
 
 
-# --- BUSINESS LOGIC DATA (Station Metadata) ---
+class ExperimentConfig:
+    """Machine Learning Experiment Setup (Fechas de Corte)."""
+
+    VAL_START_DATE = "2024-01-01"
+    TEST_START_DATE = "2025-01-01"
+    TARGET_YEAR = 2025
+
+
+class FeatureConfig:
+    """
+    Feature Engineering Configuration.
+    Ensures training and inference use exactly the same features.
+    """
+
+    # Columns to predict
+    TARGETS: list[str] = ["tmed", "tmin", "tmax", "sol", "hrMedia", "velmedia", "rain"]
+
+    # Columns to apply LAGS (Shift)
+    LAG_COLS: list[str] = [
+        "tmed",
+        "tmin",
+        "tmax",
+        "presMin",
+        "hrMedia",
+        "presion",
+        "nubes",
+        "velmedia",
+        "sol",
+        "prec",
+    ]
+
+    # Lag periods (days back)
+    LAGS: list[int] = [1, 2, 7]
+
+    # Columns to apply ROLLING WINDOWS
+    ROLL_COLS: list[str] = ["tmed", "hrMedia", "presion", "nubes"]
+
+    # Rolling window sizes (days)
+    WINDOWS: list[int] = [3, 7, 14]
+
+
+class ModelConfig:
+    """LightGBM Hyperparameters."""
+
+    # Regression (Temperature, Atmosphere)
+    LGBM_REGRESSION: dict[str, Any] = {
+        "objective": "regression",
+        "metric": "mae",
+        "boosting_type": "gbdt",
+        "num_leaves": 31,
+        "learning_rate": 0.05,
+        "feature_fraction": 0.9,
+        "verbose": -1,
+        "force_col_wise": True,
+    }
+
+    # Classification (Rain)
+    LGBM_CLASSIFIER: dict[str, Any] = {
+        "objective": "binary",
+        "metric": "auc",
+        "boosting_type": "gbdt",
+        "num_leaves": 40,
+        "learning_rate": 0.04,
+        "feature_fraction": 0.8,
+        "verbose": -1,
+    }
+
+    # Threshold to decide if it rains (0.0 to 1.0)
+    RAIN_THRESHOLD = 0.5
 
 
 class StationData(TypedDict):
+    """Structure for meteorological station data."""
+
     lat: float
     lon: float
     name: str
 
 
-# Main Dictionary: Code -> Legible name
 STATIONS: dict[str, str] = {
     "0252D": "Arenys De Mar",
     "0106X": "Balsareny",
-    "0201D": "Barcelona",
+    "0201D": "Barcelona Port Olímpic",
     "0076": "Barcelona Aeropuerto",
     "0200E": "Barcelona, Fabra",
     "0201X": "Barcelona, Museo Marítimo",
@@ -113,7 +185,6 @@ STATIONS: dict[str, str] = {
     "0244X": "Vilassar De Dalt",
 }
 
-# Metada detailed (Used by  ETL and for App Map)
 STATION_COORDS: dict[str, StationData] = {
     "0252D": {"lat": 41.581, "lon": 2.550, "name": "Arenys de Mar"},
     "0244X": {"lat": 41.517, "lon": 2.360, "name": "Vilassar de Dalt"},
@@ -141,6 +212,16 @@ STATION_COORDS: dict[str, StationData] = {
     "0171X": {"lat": 41.583, "lon": 1.617, "name": "Igualada"},
     "0066X": {"lat": 41.346, "lon": 1.698, "name": "Vilafranca del Penedès"},
     "0061X": {"lat": 41.415, "lon": 1.515, "name": "Pontons"},
+}
+
+VAR_META = {
+    "tmed": {"label": "Mean Temperature", "unit": "°C", "color": "orange"},
+    "tmin": {"label": "Minimum Temperature", "unit": "°C", "color": "blue"},
+    "tmax": {"label": "Maximum Temperature", "unit": "°C", "color": "red"},
+    "sol": {"label": "Hours of Sunlight", "unit": "h", "color": "gold"},
+    "hrMedia": {"label": "Relative Humidity", "unit": "%", "color": "teal"},
+    "velmedia": {"label": "Wind Speed", "unit": "km/h", "color": "purple"},
+    "rain": {"label": "Rain Probability", "unit": "%", "color": "navy"},
 }
 
 # App main image

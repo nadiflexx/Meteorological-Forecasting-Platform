@@ -70,9 +70,9 @@ with st.sidebar:
     df_station["fecha_dt"] = pd.to_datetime(df_station["fecha"])
     df_station["fecha_date"] = df_station["fecha_dt"].dt.date
 
-    current_year = date.today().year
+    current_year = date.today().year - 1  # Show 2025 data in 2026
 
-    # Filter to current year onwards
+    # Filter to current year onwards (should be 2025 or later) (Today is 2026) change te function to get 2025 aswell
     df_future = df_station[df_station["fecha_dt"].dt.year >= current_year]
 
     if df_future.empty:
@@ -118,7 +118,7 @@ with col_main:
     prob = row["rainbow_prob"]
 
     # --- CORRECCIÓN AQUÍ ---
-    # Usamos f-strings (f"...") para mostrar el valor numérico de {prob}
+
     if prob >= 60:
         st.success(
             f"### 🚀 HIGH PROBABILITY ({prob}%)!\n"

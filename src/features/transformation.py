@@ -57,6 +57,6 @@ class FeatureEngineer:
             if col in df.columns:
                 for w in windows:
                     df[f"{col}_roll_{w}"] = df.groupby(group_col)[col].transform(
-                        lambda x: x.rolling(w).mean()
+                        lambda x, window=w: x.rolling(window).mean()
                     )
         return df

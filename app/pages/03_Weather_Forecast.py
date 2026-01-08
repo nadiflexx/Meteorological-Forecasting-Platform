@@ -13,6 +13,7 @@ from src.config.settings import STATION_COORDS
 
 st.set_page_config(page_title="Weather Forecast", page_icon="🌦️", layout="wide")
 apply_custom_css()
+# CHANGE LOGIC: Simulate "today" as 2025 for forecast visualization. Should have a selector to change the today date.
 
 
 # --- HELPER FUNCTIONS (Internal UI Logic) ---
@@ -39,15 +40,20 @@ if df is None:
     st.error("⚠️ Data not available. Run the pipeline first.")
     st.stop()
 
-# Date Handling
+# Date Handling should be 2025 or later
 df["fecha_dt"] = pd.to_datetime(df["fecha"])
-today = pd.to_datetime("today").normalize()
+today = pd.to_datetime("today").normalize() - pd.DateOffset(years=1)
 
-# Simulation Logic
-min_data_date = df["fecha_dt"].min()
-if today < min_data_date:
-    today = min_data_date
 
+# Important: Implement selection of date for forecast visualization. only 2025 data should be shown. Now is 2026!
+selector = st.sidebar.date_input(
+    "Select Date for Forecast Map:",
+    value=today,
+    help="Choose the date to visualize the weather forecast map.",
+)
+
+if selector is not None:
+    today = pd.to_datetime(selector).normalize()
 
 # --- SECTION 1: GENERAL MAP ---
 st.title("🌦️ Weather Forecast")

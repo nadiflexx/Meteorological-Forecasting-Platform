@@ -7900,5 +7900,126 @@
         "prec": "15,8",
         "tmin": "10,7",
         "tmax": "12,6"
+    },
+    {
+        "fecha": "2025-12-21",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "10,6",
+        "prec": "6,2",
+        "tmin": "8,1",
+        "tmax": "13,2"
+    },
+    {
+        "fecha": "2025-12-22",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "6,2",
+        "prec": "1,1",
+        "tmin": "4,4",
+        "tmax": "8,1"
+    },
+    {
+        "fecha": "2025-12-23",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "6,2",
+        "prec": "2,5",
+        "tmin": "3,7",
+        "tmax": "8,7"
+    },
+    {
+        "fecha": "2025-12-24",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "9,4",
+        "prec": "3,0",
+        "tmin": "7,3",
+        "tmax": "11,4"
+    },
+    {
+        "fecha": "2025-12-25",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "6,5",
+        "prec": "10,9",
+        "tmin": "4,7",
+        "tmax": "8,3"
+    },
+    {
+        "fecha": "2025-12-26",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "9,4",
+        "prec": "18,6",
+        "tmin": "8,3",
+        "tmax": "10,6"
+    },
+    {
+        "fecha": "2025-12-27",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "9,0",
+        "prec": "17,1",
+        "tmin": "7,9",
+        "tmax": "10,2"
+    },
+    {
+        "fecha": "2025-12-28",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "10,5",
+        "prec": "1,4",
+        "tmin": "8,6",
+        "tmax": "12,4"
+    },
+    {
+        "fecha": "2025-12-29",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "9,2",
+        "prec": "1,5",
+        "tmin": "8,4",
+        "tmax": "10,0"
+    },
+    {
+        "fecha": "2025-12-30",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "7,6",
+        "prec": "0,0",
+        "tmin": "5,7",
+        "tmax": "9,6"
+    },
+    {
+        "fecha": "2025-12-31",
+        "indicativo": "0200E",
+        "nombre": "BARCELONA, FABRA",
+        "provincia": "BARCELONA",
+        "altitud": "408",
+        "tmed": "8,8",
+        "prec": "0,0",
+        "tmin": "5,3",
+        "tmax": "12,2"
     }
 ]
