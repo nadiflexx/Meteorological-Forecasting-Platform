@@ -224,6 +224,13 @@ VAR_META = {
     "rain": {"label": "Rain Probability", "unit": "%", "color": "navy"},
 }
 
+SEASONS = {
+    "Winter (Jan-Mar)": [1, 2, 3],
+    "Spring (Apr-Jun)": [4, 5, 6],
+    "Summer (Jul-Sep)": [7, 8, 9],
+    "Autumn (Oct-Dec)": [10, 11, 12],
+}
+
 # App main image
 HERO_IMAGE_URL = (
     "https://images.unsplash.com/photo-1508615070457-7baeba4003ab"
