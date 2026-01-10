@@ -12,6 +12,7 @@ from utils.data_loader import apply_custom_css, load_rainbow_predictions
 from src.config.settings import STATION_COORDS
 
 st.set_page_config(page_title="Weather Forecast", page_icon="🌦️", layout="wide")
+
 apply_custom_css()
 # CHANGE LOGIC: Simulate "today" as 2025 for forecast visualization. Should have a selector to change the today date.
 
@@ -57,6 +58,9 @@ if selector is not None:
 
 # --- SECTION 1: GENERAL MAP ---
 st.title("🌦️ Weather Forecast")
+is_clicked = st.button(label='Notify me of the daily wind chill', on_click=None)
+if is_clicked:
+    st.switch_page('pages/04_Wind_Chill_Notify_Form.py')
 st.markdown(f"**Outlook for:** {today.strftime('%A, %B %d, %Y')}")
 
 df_today = df[df["fecha_dt"] == today].copy()
@@ -169,6 +173,7 @@ with st.expander(
         - **Maximum:** <span style='color:#EF4444; font-weight:bold'>{detail_row["pred_tmax"]:.1f} °C</span>
         - **Minimum:** <span style='color:#3B82F6; font-weight:bold'>{detail_row["pred_tmin"]:.1f} °C</span>
         - **Relative Humidity:** {detail_row.get("pred_hrMedia", 0):.0f}%
+        - **Average Wind Chill:** {detail_row.get("pred_windchill",0):.1f}°C
         """,
             unsafe_allow_html=True,
         )

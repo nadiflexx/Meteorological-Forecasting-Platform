@@ -15,6 +15,7 @@ from src.modeling.rainbow import RainbowCalculator
 from src.modeling.trainers.atmosphere import AtmosphereModel
 from src.modeling.trainers.rain import RainClassifier
 from src.modeling.trainers.temperature import TemperatureModel
+from src.modeling.wind_chill import WindChillCalculator
 from src.utils.logger import log
 
 
@@ -58,12 +59,17 @@ def main():
     calculator = RainbowCalculator()
     final_results = calculator.calculate_probability(full_preds)
 
-    # 4. Load original data
+    # 4. Wind Chill Logic
+    log.info("👕​ LOGIC: Calculating Wind Chill Prediction...")
+    WindChill_calculator = WindChillCalculator()
+    final_results['pred_windchill'] = WindChill_calculator.calculate_apparent_temp(full_preds)
+
+    # 5. Load original data
     log.info("📂 Loading original data...")
     df_original = pd.read_csv(data_file)
     df_original["fecha"] = pd.to_datetime(df_original["fecha"])
 
-    # 5. Export
+    # 6. Export
     output_path = Paths.PREDICTIONS / FileNames.FORECAST_FINAL
     output_path.parent.mkdir(parents=True, exist_ok=True)
     final_results.to_csv(output_path, index=False)

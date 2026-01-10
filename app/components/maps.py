@@ -37,6 +37,7 @@ def render_forecast_map(df_today: pd.DataFrame) -> None:
         # Determine Icon based on logic
         prob_rain = row["prob_rain"]
         temp = round(row["pred_tmed"])
+        wind_chill = row["pred_windchill"]
 
         # Visual Logic
         if prob_rain > 0.5:
@@ -58,6 +59,7 @@ def render_forecast_map(df_today: pd.DataFrame) -> None:
             </div>
             <div style="font-size: 12px; color: #64748b;">
                 Rain Prob: {prob_rain * 100:.0f}%
+                AVG Wind Chill: {wind_chill}
             </div>
         </div>
         """

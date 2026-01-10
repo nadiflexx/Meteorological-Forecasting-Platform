@@ -151,6 +151,23 @@ def plot_weekly_temperature_trend(df_week: pd.DataFrame) -> go.Figure:
         )
     )
 
+# 4. Wind Chill Line (NUEVA)
+    fig.add_trace(
+        go.Scatter(
+            x=df_week["fecha_dt"],
+            y=df_week["pred_windchill"],
+            mode="lines+markers",
+            line={"color": "#8B5CF6", "width": 2, "dash": "dot"},
+            marker={
+                "size": 6,
+                "color": "#8B5CF6",
+                "symbol": "diamond"
+            },
+            name="Wind Chill",
+            hovertemplate="<b>AVG Wind Chill</b><br>%{y:.1f}°C<extra></extra>"
+        )
+    )
+
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
