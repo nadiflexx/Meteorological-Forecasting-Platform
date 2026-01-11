@@ -25,16 +25,13 @@ class WindChillCalculator:
         """
         df = df_preds.copy()
 
-        # Auxiliar: Presión de vapor (necesaria para Steadman y Heat Index)
-        # Basado en la fórmula de Tetens para presión de vapor de saturación
         def get_vapor_pressure(t, h):
             e_sat = 6.112 * np.exp((17.67 * t) / (t + 243.5))
             return (h / 100.0) * e_sat
 
-        # Inicializamos la columna con la temperatura base
         df["pred_windchill"] = df["pred_tmed"]
 
-        # --- CASO 1: WIND CHILL (Frío) ---
+        # --- CASE 1: WIND CHILL (COLD) ---
         mask_cold = (df["pred_tmed"] <= 10) & (df["pred_velmedia"] > 4.8)
         df.loc[mask_cold, "pred_windchill"] = (
             13.12
@@ -43,9 +40,9 @@ class WindChillCalculator:
             + 0.3965 * df["pred_tmed"] * (df["pred_velmedia"] ** 0.16)
         )
 
-        # --- CASO 2: HEAT INDEX (Calor) ---
+        # --- CASE 2: HEAT INDEX (Hot) ---
         mask_hot = df["pred_tmed"] >= 26
-        # Usamos la aproximación de Rothfusz (regresión simplificada)
+        # Rothfusz regression
         df.loc[mask_hot, "pred_windchill"] = (
             -8.784
             + 1.611 * df["pred_tmed"]
@@ -53,7 +50,7 @@ class WindChillCalculator:
             - 0.146 * (df["pred_tmed"] * df["pred_hrMedia"])
         )
 
-        # --- CASO 3: STEADMAN (Templado: 10°C < T < 26°C) ---
+        # --- CASE 3: STEADMAN (MILD: 10°C < T < 26°C) ---
         mask_mid = (df["pred_tmed"] > 10) & (df["pred_tmed"] < 26)
 
         e = get_vapor_pressure(df["pred_tmed"], df["pred_hrMedia"])

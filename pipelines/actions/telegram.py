@@ -3,7 +3,7 @@ import json
 import logging
 import os
 
-from dotenv import load_dotenv  # Make sure you have python-dotenv installed
+from dotenv import load_dotenv
 import requests
 
 
@@ -20,13 +20,15 @@ class TelegramBotSender:
         # Load environment variables from .env file
         load_dotenv()
 
-        self.token = token or os.getenv('TELEGRAM_BOT_TOKEN')
+        self.token = token or os.getenv("TELEGRAM_BOT_TOKEN")
         self.base_url = "https://api.telegram.org/bot"
         self.logger = self._setup_logger()
 
         # Verify we have a token
         if not self.token:
-            self.logger.warning("Bot token not configured. Use TELEGRAM_BOT_TOKEN in your .env file")
+            self.logger.warning(
+                "Bot token not configured. Use TELEGRAM_BOT_TOKEN in your .env file"
+            )
 
     def _setup_logger(self) -> logging.Logger:
         """Configures the logger for the class."""
@@ -36,7 +38,7 @@ class TelegramBotSender:
         if not logger.handlers:
             handler = logging.StreamHandler()
             formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
             )
             handler.setFormatter(formatter)
             logger.addHandler(handler)
@@ -46,7 +48,9 @@ class TelegramBotSender:
     def _make_request(self, method: str, params: dict = None) -> dict | None:
         """Makes a request to the Telegram API."""
         if not self.token:
-            self.logger.error("Bot token not configured. Add TELEGRAM_BOT_TOKEN to your .env")
+            self.logger.error(
+                "Bot token not configured. Add TELEGRAM_BOT_TOKEN to your .env"
+            )
             return None
 
         url = f"{self.base_url}{self.token}/{method}"
@@ -56,11 +60,11 @@ class TelegramBotSender:
             response.raise_for_status()
             result = response.json()
 
-            if not result.get('ok'):
+            if not result.get("ok"):
                 self.logger.error(f"Telegram API error: {result.get('description')}")
                 return None
 
-            return result.get('result')
+            return result.get("result")
 
         except requests.exceptions.RequestException as e:
             self.logger.error(f"HTTP request error: {e}")
@@ -69,9 +73,14 @@ class TelegramBotSender:
             self.logger.error(f"Error decoding JSON response: {e}")
             return None
 
-    def send_windchill_notification(self, chat_id: str, station_name: str,
-                                   windchill: float, temperature: float,
-                                   date: str = None) -> bool:
+    def send_windchill_notification(
+        self,
+        chat_id: str,
+        station_name: str,
+        windchill: float,
+        temperature: float,
+        date: str = None,
+    ) -> bool:
         """
         Sends a wind chill notification.
 
@@ -127,26 +136,24 @@ class TelegramBotSender:
 
     def get_bot_info(self) -> dict | None:
         """Gets information about the bot."""
-        return self._make_request('getMe')
+        return self._make_request("getMe")
 
     def test_connection(self) -> bool:
         """Tests connection with the Telegram API."""
         info = self.get_bot_info()
         if info:
-            bot_name = info.get('first_name', 'Unknown')
-            bot_username = info.get('username', 'Unknown')
-            self.logger.info(f"✅ Successful connection with bot: {bot_name} (@{bot_username})")
+            bot_name = info.get("first_name", "Unknown")
+            bot_username = info.get("username", "Unknown")
+            self.logger.info(
+                f"✅ Successful connection with bot: {bot_name} (@{bot_username})"
+            )
             return True
         else:
             self.logger.error("❌ Could not connect to Telegram bot")
             return False
 
     def send_message(self, chat_id: str, text: str, parse_mode: str = "HTML") -> bool:
-        params = {
-            'chat_id': chat_id,
-            'text': text,
-            'parse_mode': parse_mode
-        }
+        params = {"chat_id": chat_id, "text": text, "parse_mode": parse_mode}
 
-        result = self._make_request('sendMessage', params)
+        result = self._make_request("sendMessage", params)
         return result is not None

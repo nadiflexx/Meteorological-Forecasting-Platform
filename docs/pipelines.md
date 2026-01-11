@@ -2,7 +2,9 @@
 
 The system is driven by three sequential execution scripts located in the `pipelines/` directory. This is the backbone of the project's automation.
 
-## 1. Data Ingestion (`01_ingest_data.py`)
+## 1. Production Flow
+
+## 1.1 Data Ingestion (`01_ingest_data.py`)
 
 **Goal:** Build the raw historical dataset from official sources.
 
@@ -15,7 +17,7 @@ The system is driven by three sequential execution scripts located in the `pipel
   - Data is saved incrementally to `data/raw/` to prevent data loss during long downloads.
   - Finally, it consolidates daily JSONs into yearly files (e.g., `data_2024.json`).
 
-## 2. Data Processing (`02_process_data.py`)
+## 1.2 Data Processing (`02_process_data.py`)
 
 **Goal:** Clean, enrich, and unify data into a single Training Dataset.
 
@@ -30,7 +32,7 @@ It analyzes the raw data from the 26 stations.
 
 ### B. Physical Enrichment (Open-Meteo)
 
-AEMET data often lacks key variables for advanced modeling (like atmospheric pressure).
+AEMET data often lacks key variables for advanced modeling (like atmospheric pressure or clouds).
 
 - **Action:** The script calls the **Open-Meteo Historical Archive API** for each of the 21 valid stations.
 - **Data Retrieved:**
@@ -45,13 +47,48 @@ AEMET data often lacks key variables for advanced modeling (like atmospheric pre
 - **Long Gaps:** Uses **Climatological Means** (e.g., filling a missing day with the average of that specific day over 15 years).
 - **Output:** Generates `weather_dataset_clean.csv`, ready for Machine Learning.
 
-## 3. Model Training (`03_train_model.py`)
+## 1.3 Model Training (`03_train_model.py`)
 
 **Goal:** Train AI models and generate future forecasts.
 
 - **Input:** Reads the clean CSV.
 - **Feature Engineering:** Creates Lags (t-1, t-2), Rolling Windows, and Seasonality features.
 - **Training:** Trains 7 separate **LightGBM** models (Rain, Temp, Wind, etc.).
-- **Forecasting:** Generates predictions for the Test Set (2023-2025).
+- **Forecasting:** Generates predictions for 2025.
 - **Rainbow Logic:** Applies the heuristic formula to the predictions to calculate the `rainbow_prob`.
+- **Wind Chill** Applies .
 - **Output:** Saves the final `rainbow_forecast_final.csv`, which powers the Streamlit Dashboard.
+
+## 2. Validation Flow (The Audit)
+
+To ensure scientific rigor, we separate training from validation using 2025 as a hold-out year.
+
+### 2.1 One-Step Forecast
+
+**Methodology:** "Teacher Forcing".
+
+- The model predicts Jan 2nd using _real_ data from Jan 1st.
+- **Purpose:** Measures the model's maximum theoretical accuracy.
+- **Output:** `one_step_forecast_2025.csv`
+
+### 2.2 Recursive Forecast
+
+**Methodology:** "Blind Simulation".
+
+- The model predicts Jan 2nd using its _predicted_ data from Jan 1st.
+- **Purpose:** Measures how errors accumulate over time (Chaos Theory).
+- **Output:** `recursive_forecast_2025.csv`
+
+### 2.3 Comparative Report
+
+**Methodology:** Analytics.
+
+- Merges Real Data + One-Step + Recursive.
+- Calculates degradation metrics (MAE, Bias).
+- Generates seasonal plots (Winter vs Summer performance).
+
+### 2.4 Model Analysis
+
+**Methodology:** Visualization.
+
+-

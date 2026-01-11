@@ -19,7 +19,13 @@ import numpy as np
 import pandas as pd
 from pydantic import ValidationError
 
-from src.config.settings import STATION_COORDS, STATIONS, Paths, PipelineParams
+from src.config.settings import (
+    STATION_COORDS,
+    STATIONS,
+    FileNames,
+    Paths,
+    PipelineParams,
+)
 from src.etl.clients.openmeteo import OpenMeteoClient
 from src.schemas.weather import WeatherRecord
 from src.utils.logger import log
@@ -38,7 +44,6 @@ class WeatherProcessor:
         self.processed_dir = Paths.PROCESSED
         self.min_coverage_ratio = 0.85
 
-        # Use PipelineParams for global dates
         self.global_start = PipelineParams.START_DATE
         self.global_end = PipelineParams.END_DATE
 
@@ -200,7 +205,7 @@ class WeatherProcessor:
                 )
 
                 if not df_om.empty:
-                    # Drop NaN placeholders
+                    # Drop NaN columns
                     df_station = df_station.drop(columns=new_cols, errors="ignore")
 
                     # Merge on Date
@@ -222,7 +227,6 @@ class WeatherProcessor:
             df_station = df_station.drop(columns=["om_prec"], errors="ignore")
 
             # 5. Advanced Imputation & Flagging
-            # Restore DateTime index for time-based interpolation
             df_station = df_station.set_index("fecha", drop=False)
 
             for col in cols_continuous:
@@ -323,6 +327,6 @@ class WeatherProcessor:
 
         df = df.sort_values(["indicativo", "fecha"]).reset_index(drop=True)
 
-        output_path = self.processed_dir / "weather_dataset_clean.csv"
+        output_path = self.processed_dir / FileNames.CLEAN_DATA
         df.to_csv(output_path, index=False)
         log.info(f"✨ Final Dataset Saved: {output_path}")

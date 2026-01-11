@@ -5,10 +5,22 @@ html, body, [class*="css"] {
     font-family: 'Inter', sans-serif;
 }
 
-/* Hide Streamlit Default Elements */
+/* --- HIDING ELEMENTS --- */
+/* Hide Streamlit Default Menu (Hamburger) and Footer */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
-header {visibility: hidden;}
+
+/* 
+   This hides the Sidebar Toggle button (>). 
+   Instead, we hide the decoration bar but keep the toggle clickable.
+*/
+header[data-testid="stHeader"] {
+    background: transparent;
+}
+/* This hides the colored decoration line at the top */
+div[class*="stDecoration"] {
+    visibility: hidden;
+}
 
 /* Custom Metric Cards */
 div[data-testid="metric-container"] {
@@ -44,6 +56,14 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid #E2E8F0;
 }
 
+/* --- FIX: CAPITALIZE SIDEBAR LINKS --- */
+/* This forces "main" to look like "Main" and "wind_chull" to look like "Wind Chull" */
+div[data-testid="stSidebarNav"] span {
+    text-transform: capitalize; 
+    font-weight: 600;
+    color: #475569;
+}
+
 /* Custom Buttons */
 .stButton button {
     background-color: #7C3AED;
@@ -57,4 +77,12 @@ section[data-testid="stSidebar"] {
 .stButton button:hover {
     background-color: #6D28D9;
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Disable Button Style (for the Forecast page) */
+.stButton button:disabled {
+    background-color: #CBD5E1;
+    color: #94A3B8;
+    box-shadow: none;
+    cursor: not-allowed;
 }

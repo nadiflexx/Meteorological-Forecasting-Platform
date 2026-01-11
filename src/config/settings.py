@@ -22,14 +22,32 @@ class Paths:
     RAW = DATA / "raw"
     PROCESSED = DATA / "processed"
     PREDICTIONS = DATA / "predictions"
+    PREDICTIONS_COMPARATION = PREDICTIONS / "predictions_comparation"
+    MODEL_ANALYSIS = PREDICTIONS / "model_analysis"
+    COMPARATIVE = PREDICTIONS / "comparative"
+    TELEGRAM = DATA / "telegram"
     MODELS = ROOT / "models"
     LOGS = ROOT / "logs"
     APP = ROOT / "app"
     ASSETS = APP / "assets"
+    PAGES = APP / "pages"
 
     @classmethod
     def make_dirs(cls):
-        for path in [cls.RAW, cls.PROCESSED, cls.PREDICTIONS, cls.MODELS, cls.LOGS]:
+        """Create necessary directories if they don't exist."""
+        for path in [
+            cls.RAW,
+            cls.PROCESSED,
+            cls.PREDICTIONS,
+            cls.MODELS,
+            cls.LOGS,
+            cls.APP,
+            cls.ASSETS,
+            cls.MODEL_ANALYSIS,
+            cls.PREDICTIONS_COMPARATION,
+            cls.COMPARATIVE,
+            cls.TELEGRAM,
+        ]:
             path.mkdir(parents=True, exist_ok=True)
 
 
@@ -50,6 +68,17 @@ class FileNames:
     # Models (Naming convention prefix)
     MODEL_PREFIX = "lgbm_"
     MODEL_RAIN = "lgbm_rain_classifier.pkl"
+
+    # Analysis Reports
+    FEATURE_IMPORTANCE = "feature_importance.png"
+    COMPARATIVE_ANALYSIS = "comparative_analysis.png"
+    CORRELATION_MATRIX = "analysis_correlation_matrix.png"
+
+    SUBSCRIPTIONS_FILE = "telegram_subscriptions.json"
+    RAINBOW = "01_rainbow_hunter.py"
+    AUDIT = "02_model_audit.py"
+    WEATHER = "03_weather_forecast.py"
+    WINDCHILL = "04_wind_chill_notify_form.py"
 
 
 class APIs:
@@ -145,7 +174,7 @@ class ModelConfig:
     }
 
     # Threshold to decide if it rains (0.0 to 1.0)
-    RAIN_THRESHOLD = 0.5
+    RAIN_THRESHOLD = 0.3
 
 
 class StationData(TypedDict):
@@ -233,6 +262,8 @@ SEASONS = {
 
 # App main image
 HERO_IMAGE_URL = (
-    "https://images.unsplash.com/photo-1508615070457-7baeba4003ab"
+    "https://cdn.mos.cms.futurecdn.net/ZcS3oG3vjPb4mnVcRYGbmk.jpg.webp"
     "?q=80&w=2070&auto=format&fit=crop"
 )
+
+TELEGRAM_REDIRECT = "https://t.me/P3G3Bot"

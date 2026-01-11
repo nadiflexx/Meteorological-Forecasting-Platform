@@ -117,8 +117,6 @@ with col_main:
 
     prob = row["rainbow_prob"]
 
-    # --- CORRECCIÓN AQUÍ ---
-
     if prob >= 60:
         st.success(
             f"### 🚀 HIGH PROBABILITY ({prob}%)!\n"

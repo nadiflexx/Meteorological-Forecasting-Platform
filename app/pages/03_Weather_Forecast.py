@@ -12,12 +12,10 @@ from utils.data_loader import apply_custom_css, load_rainbow_predictions
 from src.config.settings import STATION_COORDS
 
 st.set_page_config(page_title="Weather Forecast", page_icon="🌦️", layout="wide")
-
 apply_custom_css()
-# CHANGE LOGIC: Simulate "today" as 2025 for forecast visualization. Should have a selector to change the today date.
 
 
-# --- HELPER FUNCTIONS (Internal UI Logic) ---
+# --- HELPER FUNCTIONS ---
 def _get_weather_emoji(row: pd.Series) -> str:
     """Returns an emoji based on weather conditions."""
     if row["prob_rain"] > 0.5:
@@ -41,12 +39,10 @@ if df is None:
     st.error("⚠️ Data not available. Run the pipeline first.")
     st.stop()
 
-# Date Handling should be 2025 or later
+# Date Handling (Simulation for 2025)
 df["fecha_dt"] = pd.to_datetime(df["fecha"])
 today = pd.to_datetime("today").normalize() - pd.DateOffset(years=1)
 
-
-# Important: Implement selection of date for forecast visualization. only 2025 data should be shown. Now is 2026!
 selector = st.sidebar.date_input(
     "Select Date for Forecast Map:",
     value=today,
@@ -58,27 +54,39 @@ if selector is not None:
 
 # --- SECTION 1: GENERAL MAP ---
 st.title("🌦️ Weather Forecast")
-is_clicked = st.button(label='Notify me of the daily wind chill', on_click=None)
-if is_clicked:
-    st.switch_page('pages/04_Wind_Chill_Notify_Form.py')
-st.markdown(f"**Outlook for:** {today.strftime('%A, %B %d, %Y')}")
 
 df_today = df[df["fecha_dt"] == today].copy()
 
-if not df_today.empty:
+# Logic to enable/disable button
+data_available = not df_today.empty
+
+if data_available:
+    # Button is active
+    is_clicked = st.button(label="Notify me of the daily wind chill", type="primary")
+    if is_clicked:
+        st.switch_page("pages/04_Wind_Chill_Notify_Form.py")
+else:
+    # Button is disabled
+    st.button(
+        label="Notify me of the daily wind chill",
+        disabled=True,
+        help="Feature unavailable: No weather data found for the selected date.",
+    )
+
+st.markdown(f"**Outlook for:** {today.strftime('%A, %B %d, %Y')}")
+
+if data_available:
     render_forecast_map(df_today)
 else:
-    st.warning("No data available for today's map.")
+    st.warning("⚠️ No forecast data available for this date.")
 
 st.divider()
-
 
 # --- SECTION 2: MUNICIPALITY DETAIL ---
 st.subheader("📍 Detailed Municipality Forecast")
 
 col_sel, _ = st.columns([1, 2])
 with col_sel:
-    # Dictionary comprehension for dropdown
     station_options = {
         code: f"{code} - {_get_station_name(code)}"
         for code in df["indicativo"].unique()
@@ -98,9 +106,7 @@ if df_week.empty:
     st.warning("No future data found for this station.")
     st.stop()
 
-
 # --- SECTION 3: WEEKLY CARDS ---
-# Dynamic columns based on available days (up to 7)
 cols = st.columns(len(df_week))
 
 for i, (_, day_row) in enumerate(df_week.iterrows()):
@@ -108,7 +114,6 @@ for i, (_, day_row) in enumerate(df_week.iterrows()):
         day_label = day_row["fecha_dt"].strftime("%a %d")
         icon = _get_weather_emoji(day_row)
 
-        # HTML Card
         st.markdown(
             f"""
             <div style="
@@ -118,7 +123,6 @@ for i, (_, day_row) in enumerate(df_week.iterrows()):
                 padding: 12px 5px;
                 background-color: #FFFFFF;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-                transition: transform 0.2s;
             ">
                 <div style="font-weight: 600; font-size: 0.85rem; color: #64748B; text-transform: uppercase;">
                     {day_label}
@@ -138,24 +142,20 @@ for i, (_, day_row) in enumerate(df_week.iterrows()):
             unsafe_allow_html=True,
         )
 
-
 # --- SECTION 4: TREND CHART ---
 st.markdown("### 📈 Weekly Trend")
 fig = plot_weekly_temperature_trend(df_week)
 st.plotly_chart(fig, width="stretch")
 
-
 # --- SECTION 5: DAILY DRILL-DOWN ---
 st.markdown("### 📋 Daily Breakdown")
 
-# Drill-down selector
 selected_day_str = st.selectbox(
     "Select day for details:",
     df_week["fecha_dt"].dt.strftime("%Y-%m-%d"),
     format_func=lambda x: pd.to_datetime(x).strftime("%A, %d %B"),
 )
 
-# Filter specific row
 detail_row = df_week[df_week["fecha_dt"].astype(str) == selected_day_str].iloc[0]
 station_name = _get_station_name(selected_code)
 
@@ -173,7 +173,7 @@ with st.expander(
         - **Maximum:** <span style='color:#EF4444; font-weight:bold'>{detail_row["pred_tmax"]:.1f} °C</span>
         - **Minimum:** <span style='color:#3B82F6; font-weight:bold'>{detail_row["pred_tmin"]:.1f} °C</span>
         - **Relative Humidity:** {detail_row.get("pred_hrMedia", 0):.0f}%
-        - **Average Wind Chill:** {detail_row.get("pred_windchill",0):.1f}°C
+        - **Average Wind Chill:** {detail_row.get("pred_windchill", 0):.1f}°C
         """,
             unsafe_allow_html=True,
         )
@@ -183,14 +183,42 @@ with st.expander(
         if "pred_punto_rocio" in detail_row:
             dew_point_info = f"- **Dew Point:** {detail_row['pred_punto_rocio']:.1f} °C"
 
+        # --- RAIN LOGIC (YES/NO) ---
+        prob_rain_val = detail_row["prob_rain"]
+        # Threshold: 50% (0.5)
+        if prob_rain_val >= 0.5:
+            rain_label = "YES"
+            rain_color = "#3B82F6"  # Blue
+            rain_weight = "bold"
+        else:
+            rain_label = "NO"
+            rain_color = "#64748B"  # Gray
+            rain_weight = "normal"
+
+        rain_html = f"<span style='color:{rain_color}; font-weight:{rain_weight}'>{prob_rain_val * 100:.1f}% ({rain_label})</span>"
+
+        # --- RAINBOW LOGIC (YES/NO) ---
+        rainbow_val = detail_row["rainbow_prob"]
+        # Threshold: 50%
+        if rainbow_val > 0:
+            rainbow_label = "YES"
+            rainbow_color = "#7C3AED"  # Purple
+            rainbow_weight = "bold"
+        else:
+            rainbow_label = "NO"
+            rainbow_color = "#64748B"  # Gray
+            rainbow_weight = "normal"
+
+        rainbow_html = f"<span style='color:{rainbow_color}; font-weight:{rainbow_weight}'>{rainbow_val:.1f}% ({rainbow_label})</span>"
+
         st.markdown(
             f"""
         **Atmospheric Conditions:**
-        - **Precipitation Probability:** {detail_row["prob_rain"] * 100:.1f}%
+        - **Precipitation Probability:** {rain_html}
         - **Wind Speed:** {detail_row["pred_velmedia"] * 3.6:.1f} km/h
         - **Sun Hours:** {detail_row["pred_sol"]:.1f} h
         {dew_point_info}
-        - **Rainbow Probability:** <span style='color:#7C3AED; font-weight:bold'>{detail_row["rainbow_prob"]:.1f}%</span>
+        - **Rainbow Probability:** {rainbow_html}
         """,
             unsafe_allow_html=True,
         )

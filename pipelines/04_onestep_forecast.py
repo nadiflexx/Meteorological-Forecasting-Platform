@@ -1,5 +1,7 @@
 """
 PIPELINE 04: GENERATE ONE-STEP FORECAST
+This script generates one-step ahead forecasts for a specified target year using pre-trained models.
+It processes the data to create necessary features and applies the models to produce predictions for various weather variables.
 ----------------------------------------
 """
 
@@ -90,22 +92,30 @@ def predict_simulation():
         X = X[feat_names]
 
         try:
-            preds = model.predict(X)
+            raw_preds = model.predict(X)
+
+            temp_series = pd.Series(raw_preds, index=results.index)
+            shifted_preds = temp_series.groupby(results["indicativo"]).shift(1)
+
             if target == "rain":
-                results["pred_prob_rain"] = preds
+                results["pred_prob_rain"] = shifted_preds
                 results["pred_is_raining"] = (
-                    preds > ModelConfig.RAIN_THRESHOLD
-                ).astype(int)
+                    shifted_preds > ModelConfig.RAIN_THRESHOLD
+                ).astype(float)
             else:
                 if target == "sol":
-                    preds = np.clip(preds, 0, 16)
+                    shifted_preds = np.clip(shifted_preds, 0, 16)
                 if target == "hrMedia":
-                    preds = np.clip(preds, 0, 100)
-                results[f"pred_{target}"] = preds
-        except Exception as e:
-            log.error(f"Error {target}: {e}")
+                    shifted_preds = np.clip(shifted_preds, 0, 100)
 
-    output_path = Paths.PREDICTIONS / FileNames.FORECAST_ONESTEP
+                results[f"pred_{target}"] = shifted_preds
+
+        except Exception as e:
+            log.error(f"Error predicting {target}: {e}")
+
+    results = results.dropna(subset=["pred_tmed"])
+
+    output_path = Paths.PREDICTIONS_COMPARATION / FileNames.FORECAST_ONESTEP
     results.to_csv(output_path, index=False)
     log.info(f"✅ Generated predictions in: {output_path}")
 

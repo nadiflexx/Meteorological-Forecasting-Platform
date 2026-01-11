@@ -1,5 +1,7 @@
 """
 PIPELINE 05: Recursive Multi-Step Forecasting
+This script simulates weather forecasts recursively for a target year using pre-trained models.
+It generates daily predictions for multiple weather variables by feeding previous predictions into the model.
 -----------------------------------------------
 """
 
@@ -167,7 +169,7 @@ class RecursiveSimulator:
             how="left",
         )
 
-        output = Paths.PREDICTIONS / FileNames.FORECAST_RECURSIVE
+        output = Paths.PREDICTIONS_COMPARATION / FileNames.FORECAST_RECURSIVE
         df_res.to_csv(output, index=False)
         log.info(f"💾 Simulation saved in: {output}")
 

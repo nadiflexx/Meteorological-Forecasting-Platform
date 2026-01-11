@@ -29,3 +29,12 @@ $$ P = P(Rain) \times Score(Sun) \times Factor(Humidity) $$
 - **P(Rain):** Must be high (but not 100%, which implies total overcast).
 - **Score(Sun):** Ideal is 4-10 hours (Mixed sun/rain).
 - **Factor(Humidity):** Penalizes dry air (<40%) which evaporates droplets.
+
+## 4. Wind Chill Engine
+
+Apparent temperature is calculated _after_ the ML predictions, combining three formulas based on conditions:
+
+1.  **Standard Wind Chill:** Used when $T < 10°C$ and Wind $> 4.8 km/h$.
+    $$ WC = 13.12 + 0.6215T - 11.37V^{0.16} + 0.3965TV^{0.16} $$
+2.  **Heat Index (Rothfusz):** Used when $T > 26°C$. Accounts for humidity making heat feel oppressive.
+3.  **Steadman:** Used for mild temperatures.
