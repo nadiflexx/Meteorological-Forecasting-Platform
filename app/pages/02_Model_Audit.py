@@ -43,13 +43,20 @@ def calculate_metrics(df, target):
 
 # --- MAIN UI ---
 
-st.title("📊 AI Model Audit (2025 Validation)")
-st.markdown("Technical evaluation of LightGBM model performance on the Test Set.")
+st.title("📊 Model Performance Audit (2025 Simulation)")
+st.markdown(
+    """
+    **Technical Evaluation:** Comparison between **One-Step Ahead Predictions** and **Observed Real Data** for the year 2025.
+    This module audits how well the LightGBM models perform on unseen data.
+    """
+)
 
 df_val = load_validation_data()
 
 if df_val is None:
-    st.error("⚠️ Validation file not found. Please run pipelines first.")
+    st.error(
+        "⚠️ Forecast data file not found. Please run Pipeline 04 (One-Step Forecast) first."
+    )
     st.stop()
 
 # Tabs
@@ -181,5 +188,6 @@ with tab3:
 
 # --- TAB 4: RAW DATA ---
 with tab4:
-    st.markdown("### 🔍 Validation Dataset (First 100 rows)")
+    st.markdown("### 🔍 Forecast Simulation Data (2025)")
+    st.markdown("Raw data comparing `pred_` (Predicted) vs `real_` (Observed) values.")
     st.dataframe(df_val.head(100), width="stretch")
