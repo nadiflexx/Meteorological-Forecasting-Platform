@@ -1,0 +1,156 @@
+{
+  "unidad_generadora": "Servicio del Banco Nacional de Datos Climatol�gicos",
+  "periodicidad": "1 vez al d�a, con un retardo de 4 d�as",
+  "descripcion": "Climatolog�as diarias",
+  "formato": "application/json",
+  "copyright": "� AEMET. Autorizado el uso de la informaci�n y su reproducci�n citando a AEMET como autora de la misma.",
+  "notaLegal": "https://www.aemet.es/es/nota_legal",
+  "campos": [
+  	{"id":"fecha",
+	"descripcion": "fecha del dia (AAAA-MM-DD)",
+	"tipo_datos": "string",
+    	"requerido": true
+    },
+	{"id":"indicativo",
+	"descripcion": "indicativo climatol�gico",
+	"tipo_datos": "string",
+    	"requerido": true
+    },
+	{"id": "nombre",
+	"descripcion": "nombre (ubicaci�n) de la estaci�n",
+	"tipo_datos": "string",
+    	"requerido": true 
+    },
+	{"id": "provincia",
+	"descripcion": "provincia de la estaci�n",
+	"tipo_datos": "string",
+    	"requerido": true
+    },
+	{"id": "altitud",
+	"descripcion": "altitud de la estaci�n en m sobre el nivel del mar",
+	"tipo_datos": "float",
+	"unidad": "m",
+    	"requerido": true
+    },
+	{"id":"tmed",
+	"descripcion": "Temperatura media diaria",
+	"tipo_datos": "float",
+	"unidad": "�C",
+    	"requerido": false
+    },
+	{"id":"prec",
+        "descripcion": "Precipitaci�n diaria de 07 a 07",
+        "tipo_datos": "float",
+        "unidad": "mm (Ip = inferior a 0,1 mm) (Acum = Precipitaci�n acumulada)",
+        "requerido": false
+    },
+        {"id":"tmin",
+        "descripcion": "Temperatura M�nima del d�a",
+        "tipo_datos": "float",
+        "unidad": "�C",
+        "requerido": false
+    },
+        {"id":"horatmin",
+        "descripcion": "Hora y minuto de la temperatura m�nima",
+        "tipo_datos": "string",
+	"unidad": "UTC",
+        "requerido": false
+    },
+        {"id":"tmax",
+        "descripcion": "Temperatura M�xima del d�a",
+        "tipo_datos": "float",
+        "unidad": "�C",
+        "requerido": false
+    },
+        {"id":"horatmax",
+        "descripcion": "Hora y minuto de la temperatura m�xima",
+        "tipo_datos": "string",
+	"unidad": "UTC",
+        "requerido": false
+    },
+        {"id":"dir",
+        "descripcion": "Direcci�n de la racha m�xima",
+        "tipo_datos": "float",
+        "unidad": "decenas de grado (99 = direcci�n variable)(88 = sin dato)",
+        "requerido": false
+    },
+        {"id":"velmedia",
+        "descripcion": "Velocidad media del viento",
+        "tipo_datos": "float",
+        "unidad": "m/s",
+        "requerido": false
+    },
+        {"id":"racha",
+        "descripcion": "Racha m�xima del viento",
+        "tipo_datos": "float",
+        "unidad": "m/s",
+        "requerido": false
+    },
+        {"id":"horaracha",
+        "descripcion": "Hora y minuto de la racha m�xima",
+        "tipo_datos": "string",
+	"unidad": "UTC",
+        "requerido": false
+    },
+        {"id":"sol",
+        "descripcion": "Insolaci�n",
+        "tipo_datos": "float",
+	"unidad": "horas",
+        "requerido": false
+    },
+        {"id":"presmax",
+        "descripcion": "Presi�n m�xima al nivel de referencia de la estaci�n",
+        "tipo_datos": "float",
+	"unidad": "hPa",
+        "requerido": false
+    },
+        {"id":"horapresmax",
+        "descripcion": "Hora de la presi�n m�xima (redondeada a la hora entera m�s pr�xima)",
+        "tipo_datos": "string",
+	"unidad": "UTC",
+        "requerido": false
+    },
+        {"id":"presmin",
+        "descripcion": "Presi�n m�nima al nivel de referencia de la estaci�n",
+        "tipo_datos": "float",
+	"unidad": "hPa",
+        "requerido": false
+    },
+        {"id":"horapresmin",
+        "descripcion": "Hora de la presi�n m�nima (redondeada a la hora entera m�s pr�xima)",
+        "tipo_datos": "string",
+	"unidad": "UTC",
+        "requerido": false
+    },
+        {"id":"hrmedia",
+        "descripcion": "Humedad relativa media diaria",
+        "tipo_datos": "float",
+	"unidad": "%",
+        "requerido": false
+    },
+        {"id":"hrmax",
+        "descripcion": "Humedad relativa m�xima diaria",
+        "tipo_datos": "float",
+	"unidad": "%",
+        "requerido": false
+    },
+        {"id":"horahrmax",
+        "descripcion": "Hora de la humedad relativa m�xima diaria",
+        "tipo_datos": "string",
+	"unidad": "UTC",
+        "requerido": false
+    },
+        {"id":"hrmin",
+        "descripcion": "Humedad relativa m�nima diaria",
+        "tipo_datos": "float",
+	"unidad": "%",
+        "requerido": false
+    },
+        {"id":"horahrmin",
+        "descripcion": "Hora de la humedad relativa m�nima diaria",
+        "tipo_datos": "string",
+	"unidad": "UTC",
+        "requerido": false
+    }
+  ]
+}

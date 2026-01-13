@@ -1,0 +1,264 @@
+[
+    {
+        "fecha": "2007-01-01",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,9",
+        "hrMedia": "86"
+    },
+    {
+        "fecha": "2007-01-02",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,8"
+    },
+    {
+        "fecha": "2007-01-03",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1",
+        "hrMedia": "79"
+    },
+    {
+        "fecha": "2007-01-04",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1",
+        "hrMedia": "74"
+    },
+    {
+        "fecha": "2007-01-05",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1",
+        "hrMedia": "81"
+    },
+    {
+        "fecha": "2007-01-06",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1",
+        "hrMedia": "89"
+    },
+    {
+        "fecha": "2007-01-07",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1",
+        "hrMedia": "78"
+    },
+    {
+        "fecha": "2007-01-08",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,7"
+    },
+    {
+        "fecha": "2007-01-09",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1",
+        "hrMedia": "78"
+    },
+    {
+        "fecha": "2007-01-10",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,3"
+    },
+    {
+        "fecha": "2007-01-11",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1"
+    },
+    {
+        "fecha": "2007-01-12",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,7"
+    },
+    {
+        "fecha": "2007-01-13",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,8"
+    },
+    {
+        "fecha": "2007-01-14",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,8"
+    },
+    {
+        "fecha": "2007-01-15",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,6",
+        "hrMedia": "85"
+    },
+    {
+        "fecha": "2007-01-16",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,8"
+    },
+    {
+        "fecha": "2007-01-17",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,7"
+    },
+    {
+        "fecha": "2007-01-18",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1",
+        "hrMedia": "81"
+    },
+    {
+        "fecha": "2007-01-19",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "3,1"
+    },
+    {
+        "fecha": "2007-01-20",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,4"
+    },
+    {
+        "fecha": "2007-01-21",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,3"
+    },
+    {
+        "fecha": "2007-01-22",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1"
+    },
+    {
+        "fecha": "2007-01-23",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "6,1",
+        "hrMedia": "67"
+    },
+    {
+        "fecha": "2007-01-24",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "3,9",
+        "hrMedia": "42"
+    },
+    {
+        "fecha": "2007-01-25",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,1"
+    },
+    {
+        "fecha": "2007-01-26",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,4"
+    },
+    {
+        "fecha": "2007-01-27",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,9",
+        "hrMedia": "63"
+    },
+    {
+        "fecha": "2007-01-28",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,4"
+    },
+    {
+        "fecha": "2007-01-29",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "0,6",
+        "hrMedia": "56"
+    },
+    {
+        "fecha": "2007-01-30",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,9"
+    },
+    {
+        "fecha": "2007-01-31",
+        "indicativo": "0149X",
+        "nombre": "MANRESA",
+        "provincia": "BARCELONA",
+        "altitud": "291",
+        "velmedia": "1,7",
+        "hrMedia": "71"
+    }
+]
