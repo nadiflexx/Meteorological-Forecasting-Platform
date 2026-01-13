@@ -3,9 +3,17 @@
 Independent module for the Rainbow AI startup animation.
 """
 
+import textwrap
 import time
 
 import streamlit as st
+from utils.data_loader import load_image_base64
+
+from src.config.settings import FileNames, Paths
+
+# 1. Page Configuration
+logo_path = Paths.ASSETS / FileNames.LOGO
+logo_base64 = load_image_base64(logo_path)
 
 
 def show_loading_with_progress() -> bool:
@@ -35,24 +43,16 @@ def show_loading_with_progress() -> bool:
         col1, col2, col3 = st.columns([1, 2, 1])
 
         with col2:
-            st.markdown(
-                """
-                <div style='text-align: center; padding-top: 120px;'>
-                    <h1 style='font-size: 3.2rem;
-                               background: linear-gradient(90deg, #FF6B6B, #FFE66D, #4ECDC4, #45B7D1, #96E6A1, #DDA0DD);
-                               -webkit-background-clip: text;
-                               -webkit-text-fill-color: transparent;
-                               margin-bottom: 10px;
-                               font-weight: 800;'>
-                        🌈 Rainbow AI
-                    </h1>
-                    <p style='color: #94a3b8; font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase;'>
-                        Meteorological Intelligence System
-                    </p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            html = f"""
+            <div style='text-align: center; padding-top: 120px;'>
+                <img src="data:image/png;base64,{logo_base64}"
+                    alt="Rainbow AI Logo"
+                    style="width:500px; height:auto; margin-bottom:20px;" />
+                <p style='color: #94a3b8; font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase;'>Meteorological Intelligence System</p>
+            </div>
+            """
+
+            st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
 
             st.markdown("<br><br>", unsafe_allow_html=True)
             progress_bar = st.progress(0)

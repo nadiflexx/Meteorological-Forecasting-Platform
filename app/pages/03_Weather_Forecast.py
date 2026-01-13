@@ -9,9 +9,13 @@ import pandas as pd
 import streamlit as st
 from utils.data_loader import apply_custom_css, load_rainbow_predictions
 
-from src.config.settings import STATION_COORDS
+from src.config.settings import STATION_COORDS, FileNames, Paths
 
-st.set_page_config(page_title="Weather Forecast", page_icon="🌦️", layout="wide")
+st.set_page_config(
+    page_title="Weather Forecast",
+    page_icon=Paths.ASSETS / FileNames.LOGO,
+    layout="wide",
+)
 apply_custom_css()
 
 

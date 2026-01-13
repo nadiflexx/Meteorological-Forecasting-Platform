@@ -18,9 +18,11 @@ from sklearn.metrics import (
 import streamlit as st
 from utils.data_loader import apply_custom_css, load_validation_data
 
-from src.config.settings import ModelConfig
+from src.config.settings import FileNames, ModelConfig, Paths
 
-st.set_page_config(page_title="Model Audit", page_icon="📊", layout="wide")
+st.set_page_config(
+    page_title="Model Audit", page_icon=Paths.ASSETS / FileNames.LOGO, layout="wide"
+)
 apply_custom_css()
 
 

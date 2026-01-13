@@ -2,7 +2,7 @@
 Open-Meteo API Client.
 
 Handles interaction with the Open-Meteo Historical Archive API to retrieve
-physics-based meteorological data (Solar radiation, Pressure, Dew Point)
+physics-based meteorological data (Sunshine, Pressure, Clouds) for locations
 that serves to enrich the primary AEMET dataset.
 """
 
@@ -44,8 +44,8 @@ class OpenMeteoClient:
         self, lat: float, lon: float, start_date: datetime, end_date: datetime
     ) -> pd.DataFrame:
         """
-        Retrieves daily weather variables including Solar Radiation, Pressure, and Clouds.
-
+        Fetches daily solar radiation, precipitation, pressure, and cloud cover data
+        from Open-Meteo for the specified location and date range.
         Args:
             lat (float): Latitude of the station.
             lon (float): Longitude of the station.

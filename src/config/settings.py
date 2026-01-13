@@ -80,6 +80,8 @@ class FileNames:
     WEATHER = "03_weather_forecast.py"
     WINDCHILL = "04_wind_chill_notify_form.py"
 
+    LOGO = "logo.png"
+
 
 class APIs:
     """External Service Configuration."""

@@ -3,6 +3,8 @@ Data Loading Utilities.
 Uses centralized settings from src.config.settings.
 """
 
+import base64
+
 import pandas as pd
 import streamlit as st
 
@@ -53,3 +55,56 @@ def apply_custom_css() -> None:
     if css_path.exists():
         with open(css_path, encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+
+def inject_page_css():
+    """Injects custom CSS styles directly into the Streamlit app."""
+    st.markdown(
+        """
+        <style>
+        /* Headers */
+        h1 { color: #0068c9; font-weight: 700; }
+        h3 { color: #2c3e50; }
+
+        /* Custom Buttons */
+        .stButton button {
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* Info Box */
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0088cc;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        /* Weather Advice Cards */
+        .weather-card {
+            text-align: center;
+            padding: 20px 10px;
+            border-radius: 12px;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        .card-cold { background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%); border: 1px solid #90caf9; }
+        .card-mild { background: linear-gradient(180deg, #e8f5e9 0%, #c8e6c9 100%); border: 1px solid #a5d6a7; }
+        .card-hot { background: linear-gradient(180deg, #fff3e0 0%, #ffe0b2 100%); border: 1px solid #ffcc80; }
+
+        .emoji-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .card-title { font-weight: bold; font-size: 1.1rem; color: #333; display: block; margin-bottom: 5px; }
+        .card-desc { font-size: 0.85rem; color: #555; }
+        </style>
+    """,
+        unsafe_allow_html=True,
+    )
+
+
+def load_image_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()

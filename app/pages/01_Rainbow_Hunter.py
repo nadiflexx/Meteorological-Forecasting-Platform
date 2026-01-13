@@ -10,7 +10,7 @@ import pandas as pd
 import streamlit as st
 from utils.data_loader import apply_custom_css, load_rainbow_predictions
 
-from src.config.settings import STATION_COORDS
+from src.config.settings import STATION_COORDS, FileNames, Paths
 
 # ---------------------------------------------------------------------
 # PAGE CONFIG
@@ -18,7 +18,7 @@ from src.config.settings import STATION_COORDS
 st.set_page_config(
     page_title="Rainbow Hunter",
     layout="wide",
-    page_icon="🌈",
+    page_icon=Paths.ASSETS / FileNames.LOGO,
 )
 apply_custom_css()
 

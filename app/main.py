@@ -5,16 +5,21 @@ This is the landing page of the application. It handles the initial configuratio
 global styling injection, the loading sequence, and the welcome dashboard.
 """
 
+import textwrap
+
 from components.loading import show_loading_with_progress
 import streamlit as st
-from utils.data_loader import apply_custom_css
+from utils.data_loader import apply_custom_css, load_image_base64
 
 from src.config.settings import HERO_IMAGE_URL, FileNames, Paths
 
 # 1. Page Configuration
+logo_path = Paths.ASSETS / FileNames.LOGO
+logo_base64 = load_image_base64(logo_path)
+
 st.set_page_config(
     page_title="Rainbow AI",
-    page_icon="🌈",
+    page_icon=logo_path,
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -35,19 +40,20 @@ def main() -> None:
     # --- MAIN DASHBOARD CONTENT ---
 
     # Hero Header
-    st.markdown(
-        """
-        <div style='text-align: center; padding: 40px 0 20px 0;'>
-            <h1 style='font-size: 3.5rem; margin-bottom: 10px; font-weight: 800;'>
-                Rainbow <span style='color: #7C3AED;'>AI</span>
-            </h1>
-            <p style='font-size: 1.2rem; color: #64748B; max-width: 600px; margin: 0 auto;'>
-                Advanced Meteorological Intelligence System (2025 Forecast).
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    # FIX ERROR
+    html = f"""
+    <div style="text-align:center; padding:40px 0 20px 0;">
+    <img src="data:image/png;base64,{logo_base64}"
+        alt="Rainbow AI Logo"
+        style="width:500px; height:auto; margin-bottom:20px;" />
+
+    <p style="font-size:1.2rem; color:#64748B; max-width:600px; margin:0 auto;">
+        Advanced Meteorological Intelligence System (2025 Forecast).
+    </p>
+    </div>
+    """
+
+    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
 
     st.markdown("---")
 
