@@ -4,7 +4,7 @@ import pytest
 
 @pytest.fixture
 def sample_weather_df():
-    """Genera un DataFrame falso con datos meteorológicos."""
+    """Generates a sample weather DataFrame for testing purposes."""
     return pd.DataFrame(
         {
             "fecha": pd.date_range(start="2024-01-01", periods=5),

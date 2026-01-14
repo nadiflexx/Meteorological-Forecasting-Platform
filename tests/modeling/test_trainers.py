@@ -30,7 +30,7 @@ def training_data():
             "dir": [90] * 20,
         }
     )
-    # IMPORTANT: load_and_prepare está mockeado en los tests, así que station_id no se crea.
+    # IMPORTANT: load_and_prepare is mocked out, so we need to add station_id ourselves
     df["station_id"] = 0
     return df
 
