@@ -4,7 +4,7 @@ Atmosphere Model Trainer.
 
 import numpy as np
 
-from src.config.settings import ExperimentConfig, FeatureConfig
+from src.config.settings import ExperimentConfig, FeatureConfig, ModelConfig
 from src.features.transformation import FeatureEngineer
 from src.modeling.base import BaseModel
 from src.utils.logger import log
@@ -62,6 +62,14 @@ class AtmosphereModel(BaseModel):
             )
             y_test_eval = y_test_full.loc[test_eval_idx]
 
+            custom_params = {}
+            if target == "sol":
+                custom_params = ModelConfig.LGBM_SOL
+            elif target == "hrMedia":
+                custom_params = ModelConfig.LGBM_HUMIDITY
+            elif target == "velmedia":
+                custom_params = ModelConfig.LGBM_VELMEDIA
+
             preds_all = self.train_lgbm(
                 X_train,
                 y_train,
@@ -71,6 +79,7 @@ class AtmosphereModel(BaseModel):
                 X_test_eval,
                 y_test_eval,
                 target,
+                custom_params=custom_params,
             )
 
             preds_all = np.maximum(preds_all, 0)

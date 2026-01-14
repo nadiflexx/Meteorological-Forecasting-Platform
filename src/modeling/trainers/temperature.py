@@ -2,7 +2,7 @@
 Temperature Model Trainer.
 """
 
-from src.config.settings import ExperimentConfig, FeatureConfig
+from src.config.settings import ExperimentConfig, FeatureConfig, ModelConfig
 from src.modeling.base import BaseModel
 from src.utils.logger import log
 
@@ -77,6 +77,14 @@ class TemperatureModel(BaseModel):
             )
             y_test_eval = y_test_full.loc[test_eval_idx]
 
+            custom_params = {}
+            if target == "tmed":
+                custom_params = ModelConfig.LGBM_TMED
+            elif target == "tmin":
+                custom_params = ModelConfig.LGBM_TMIN
+            elif target == "tmax":
+                custom_params = ModelConfig.LGBM_TMAX
+
             preds_all = self.train_lgbm(
                 X_train,
                 y_train,
@@ -86,6 +94,7 @@ class TemperatureModel(BaseModel):
                 X_test_eval,
                 y_test_eval,
                 target,
+                custom_params=custom_params,
             )
             results.loc[test_all_idx, f"pred_{target}"] = preds_all
 

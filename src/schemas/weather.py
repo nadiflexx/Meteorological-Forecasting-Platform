@@ -71,9 +71,9 @@ class WeatherRecord(BaseModel):
             # Basic cleanup: Replace decimal comma with dot and remove spaces
             v_clean = v.replace(",", ".").strip()
 
-            # Special Case: "Ip" means "Inappreciable" (trace amount of rain) -> 0.0
+            # Special Case: "Ip" means "Inappreciable" (trace amount of rain less than 0.1mm) -> 0.05
             if v_clean.lower() == "ip":
-                return 0.0
+                return 0.05
 
             try:
                 return float(v_clean)
