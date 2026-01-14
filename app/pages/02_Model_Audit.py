@@ -1,18 +1,22 @@
 """
 Streamlit page for Model Auditing.
-Visualizes performance metrics (MAE, R2, Scatter Plots) using the One-Step Forecast validation set.
+Visualizes performance metrics (MAE, R2, Scatter Plots, Confusion Matrix, ROC Curve, Histogram...) using the One-Step Forecast validation set.
 """
 
 from components.charts import (
     plot_confusion_matrix,
     plot_rain_probability_hist,
+    plot_roc_curve,
     plot_scatter_vs_real,
 )
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
+    f1_score,
     mean_absolute_error,
+    precision_score,
     r2_score,
+    recall_score,
     roc_auc_score,
 )
 import streamlit as st
@@ -111,21 +115,38 @@ with tab2:
         auc = roc_auc_score(y_true, y_prob)
         acc = accuracy_score(y_true, y_pred)
         tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+        prec = precision_score(y_true, y_pred)
+        rec = recall_score(y_true, y_pred)
+        f1 = f1_score(y_true, y_pred)
 
         # 2. Metrics Row
-        c1, c2, c3 = st.columns(3)
+        c1, c2, c3, c4, c5, c6 = st.columns(6)
         c1.metric("ROC-AUC", f"{auc:.3f}", help="Model's ability to separate classes.")
         c2.metric(
             "Accuracy", f"{acc * 100:.1f}%", help="Percentage of total correct hits."
         )
         c3.metric(
+            "Precision",
+            f"{prec:.2f}",
+            help="Fiability: When predicting rain, how often is it correct? (Avoids False Alarms)",
+        )
+        c4.metric(
+            "Recall",
+            f"{rec:.2f}",
+            help="Sensitivity: Of all real rains, how many did it detect? (Avoids Surprises)",
+        )
+        c5.metric(
+            "F1-Score", f"{f1:.2f}", help="Balanced average of Precision and Recall."
+        )
+        c6.metric(
             "Threshold", f"{ModelConfig.RAIN_THRESHOLD}", help="Decision cut-off point."
         )
 
         st.markdown("---")
 
-        # 3. Visuals Row
+        # 3. Visuals Row (Matrix + ROC)
         col_left, col_right = st.columns(2)
+
         with col_left:
             # Confusion Matrix Heatmap
             st.plotly_chart(plot_confusion_matrix(tn, fp, fn, tp), width="stretch")
@@ -134,11 +155,18 @@ with tab2:
             )
 
         with col_right:
-            # Probability Histogram
-            st.plotly_chart(plot_rain_probability_hist(df_val), width="stretch")
+            # --- ROC CURVE ---
+            st.plotly_chart(plot_roc_curve(y_true, y_prob, auc), width="stretch")
             st.caption(
-                "This shows how well the model separates Rainy vs Dry days based on probability."
+                "Shows the trade-off between catching rain (True Positive) and false alarms (False Positive)."
             )
+
+        # 4. Probability Histogram (Bottom)
+        st.markdown("#### Confidence Distribution")
+        st.plotly_chart(plot_rain_probability_hist(df_val), width="stretch")
+        st.caption(
+            "This shows how confident the model is. Good models separate Blue (Rain) and Grey (Dry) completely."
+        )
 
     else:
         st.warning("Rain validation data missing.")

@@ -2,13 +2,17 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
+from sklearn.metrics import roc_curve
+
+pio.templates.default = "plotly_white"
 
 
 def plot_scatter_vs_real(
     df: pd.DataFrame, target: str, title: str, unit: str
 ) -> px.scatter:
     """
-    Generates a professional scatter plot comparing predicted vs real values.
+    Generates a professional scatter plot comparing predicted vs real values. Includes a perfect prediction line (y=x).
 
     Args:
         df: Dataframe containing validation data.
@@ -235,6 +239,52 @@ def plot_weekly_temperature_trend(df_week: pd.DataFrame) -> go.Figure:
         },
         showlegend=False,
         hovermode="x unified",
+    )
+
+    return fig
+
+
+def plot_roc_curve(y_true, y_prob, auc_score):
+    """
+    Generates an Interactive ROC Curve.
+    """
+    fpr, tpr, thresholds = roc_curve(y_true, y_prob)
+
+    fig = go.Figure()
+
+    # 1. The ROC Curve line
+    fig.add_trace(
+        go.Scatter(
+            x=fpr,
+            y=tpr,
+            mode="lines",
+            name=f"ROC Curve (AUC = {auc_score:.3f})",
+            line={"color": "#3B82F6", "width": 3},
+            fill="tozeroy",
+            fillcolor="rgba(59, 130, 246, 0.1)",
+        )
+    )
+
+    # 2. Diagonal line (Random Guess)
+    fig.add_trace(
+        go.Scatter(
+            x=[0, 1],
+            y=[0, 1],
+            mode="lines",
+            name="Random Guess",
+            line={"color": "gray", "width": 2, "dash": "dash"},
+        )
+    )
+
+    fig.update_layout(
+        title=f"ROC Curve (AUC = {auc_score:.3f})",
+        xaxis_title="False Positive Rate (1 - Specificity)",
+        yaxis_title="True Positive Rate (Sensitivity)",
+        xaxis={"range": [0, 1], "constrain": "domain"},
+        yaxis={"range": [0, 1], "constrain": "domain"},
+        legend={"x": 0.6, "y": 0.1},
+        plot_bgcolor="white",
+        margin={"l": 20, "r": 20, "t": 40, "b": 20},
     )
 
     return fig

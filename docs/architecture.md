@@ -1,128 +1,319 @@
 # 🏗️ System Architecture
 
-The project adopts a **Modular Layered Architecture**, enabling separation of concerns between Data Engineering, Machine Learning logic, and User Interface. This structure facilitates testing, scalability, and maintenance.
+## Overview
 
-## 🌳 Full Directory Structure
+Rainbow AI adopts a **Modular Layered Architecture** that cleanly separates Data Engineering, Machine Learning, and User Interface concerns. This design enables rigorous testing, horizontal scalability, and maintainable code evolution.
 
-```text
-METEOROLOGICAL-PREDICTION-SYSTEM/
+---
+
+## 🌳 Complete Directory Structure
+
+```
+Meteorological-Prediction-System/
 │
-├── 📂 app/                          # FRONTEND (Presentation Layer)
-│   ├── 📂 assets/
-│   │   └── style.css                # Global styling (Fonts, Shadows, Colors)
-│   ├── 📂 components/               # UI Widgets (Isolated Logic)
-│   │   ├── charts.py                # Plotly configurations
-│   │   ├── loading.py               # Startup animation logic
-│   │   ├── maps.py                  # Folium geospatial rendering
-│   │   └── visuals.py               # SVG Rainbow rendering
-│   ├── 📂 pages/                    # Streamlit Views
-│   │   ├── 01_Rainbow_Hunter.py     # Main Dashboard
-│   │   ├── 02_Model_Audit.py        # Technical Evaluation
-│   │   └── 03_Weather_Forecast.py   # General Weather Sim
-│   ├── 📂 utils/
-│   │   └── data_loader.py           # Frontend Caching & Data IO
-│   └── main.py                      # Application Entry Point
+├── 📂 pipelines/                    # ORCHESTRATION LAYER
+│   │                                # (7 sequential execution pipelines)
+│   ├── 01_ingest_data.py            # ETL Stage 1: Download AEMET (2009–2025)
+│   ├── 02_process_data.py           # ETL Stage 2: Clean & enrich with Open-Meteo
+│   ├── 03_train_model.py            # ML Stage 1: Train 7 models & forecast
+│   ├── 04_onestep_forecast.py       # Validation 1: Teacher forcing (maximum accuracy)
+│   ├── 05_recursive_forecast.py     # Validation 2: Multi-step (realistic errors)
+│   ├── 06_comparative_report.py     # Validation 3: Metrics & plots
+│   ├── 07_model_analysis.py         # Validation 4: Feature importance & residuals
+│   ├── best_params.py               # Hyperparameter tuning utilities
+│   ├── best_threshold.py            # Rain classification threshold optimization
+│   └── actions/                     # Supplementary action scripts
 │
-├── 📂 pipelines/                    # ORCHESTRATION LAYER (Execution)
-│   ├── 01_ingest_data.py            # Trigger AEMET ETL
-│   ├── 02_process_data.py           # Trigger Cleaning & Enrichment
-│   └── 03_train_model.py            # Trigger ML Training
-│
-├── 📂 src/                          # BACKEND CORE (Domain Logic)
+├── 📂 src/                          # BACKEND CORE
+│   │                                # (Domain logic & scientific computation)
 │   ├── 📂 config/
-│   │   └── settings.py              # Single Source of Truth (Paths, APIs)
-│   ├── 📂 etl/                      # Extract-Transform-Load
+│   │   └── settings.py              # Single Source of Truth: Paths, APIs, Models, Features
+│   │
+│   ├── 📂 etl/                      # EXTRACT-TRANSFORM-LOAD
 │   │   ├── 📂 clients/
-│   │   │   ├── aemet.py             # AEMET API Wrapper
-│   │   │   └── openmeteo.py         # Open-Meteo API Wrapper
-│   │   ├── ingestion.py             # File System & atomic writes
-│   │   └── processing.py            # Data fusion & Imputation logic
+│   │   │   ├── aemet.py             # AEMET OpenData API (Rate-limit handling)
+│   │   │   └── openmeteo.py         # Open-Meteo Archive API (Pressure, clouds)
+│   │   ├── ingestion.py             # File I/O & atomic writes
+│   │   └── processing.py            # Fusion, validation, cleaning, imputation
+│   │
 │   ├── 📂 features/                 # FEATURE ENGINEERING
-│   │   ├── physics.py               # Thermodynamic formulas (Magnus, VPD)
-│   │   └── transformation.py        # Maths (Lags, Rolling, Cyclical)
+│   │   ├── transformation.py        # Lags, rolling windows, cyclical encoding
+│   │   └── physics.py               # Magnus formula, VPD, RH calculations
+│   │
 │   ├── 📂 modeling/                 # MACHINE LEARNING
-│   │   ├── 📂 trainers/             # Specific Model Configurations
-│   │   │   ├── atmosphere.py        # Solar/Wind/Humidity models
-│   │   │   ├── rain.py              # Rain Classifier
-│   │   │   └── temperature.py       # Temp Regressors
-│   │   ├── base.py                  # LightGBM Wrapper (Train/Save/Load)
-│   │   └── rainbow.py               # Rainbow Heuristic Logic
+│   │   ├── base.py                  # BaseModel: LightGBM wrapper
+│   │   │                            # (fit, save, load, predict, explain)
+│   │   ├── 📂 trainers/
+│   │   │   ├── rain.py              # RainClassifier (Binary: rain/no-rain)
+│   │   │   ├── temperature.py       # TemperatureModel (3 regressors)
+│   │   │   └── atmosphere.py        # AtmosphereModel (3 regressors)
+│   │   ├── rainbow.py               # RainbowCalculator (Heuristic logic)
+│   │   └── wind_chill.py            # WindChillCalculator (Apparent temp)
+│   │
 │   ├── 📂 schemas/                  # DATA VALIDATION
-│   │   └── weather.py               # Pydantic Schemas
+│   │   └── weather.py               # Pydantic models (WeatherRecord, StationMetadata)
+│   │
 │   └── 📂 utils/                    # SHARED UTILITIES
-│       ├── cleaner.py               # Cleanup scripts
-│       ├── logger.py                # Centralized Logging system
-│       └── resilience.py            # Handles API Calls with Exponential Backoff
-└── 📂 docs/                         # DOCUMENTATION (MkDocs)
+│       ├── logger.py                # Logging (file + console)
+│       ├── constants.py             # Global constants (station IDs, variable names)
+│       └── helpers.py               # Generic helper functions
+│
+├── 📂 app/                          # PRESENTATION LAYER
+│   │                                # (Streamlit frontend)
+│   ├── main.py                      # App entry point & layout
+│   ├── 📂 pages/
+│   │   ├── 01_Rainbow_Hunter.py     # Page 1: Rainbow probability detector
+│   │   ├── 02_Model_Audit.py        # Page 2: Performance metrics & validation
+│   │   ├── 03_Weather_Forecast.py   # Page 3: 21-day forecast maps & charts
+│   │   └── 04_Wind_Chill_Notify_Form.py  # Page 4: Apparent temp calculator
+│   │
+│   ├── 📂 components/
+│   │   ├── charts.py                # Plotly charts (scatter, line, box)
+│   │   ├── maps.py                  # Folium geospatial maps
+│   │   ├── visuals.py               # Custom styling & widgets
+│   │   └── loading.py               # Caching & data loaders
+│   │
+│   └── 📂 assets/
+│       └── style.css                # CSS styling
+│
+├── 📂 data/                         # DATA LAYER
+│   ├── 📂 raw/
+│   │   ├── Station_Metadata.json    # Station coordinates & metadata
+│   │   └── Station_*/               # 21 folders (one per station)
+│   │       ├── 2009.json
+│   │       ├── 2010.json
+│   │       └── ... (one file per year)
+│   │
+│   ├── 📂 processed/
+│   │   └── weather_dataset_clean.csv  # Unified clean training data
+│   │
+│   └── 📂 predictions/
+│       ├── rainbow_forecast_final.csv # Final 21-day forecast output
+│       ├── 📂 predictions_comparation/
+│       ├── 📂 model_analysis/
+│       └── 📂 comparative/
+│
+├── 📂 models/                       # ML ARTIFACTS
+│   ├── lgbm_rain.pkl                # Rain classifier (binary)
+│   ├── lgbm_tmed.pkl                # Mean temp regressor
+│   ├── lgbm_tmin.pkl                # Min temp regressor
+│   ├── lgbm_tmax.pkl                # Max temp regressor
+│   ├── lgbm_sol.pkl                 # Solar radiation regressor
+│   ├── lgbm_hrMedia.pkl             # Humidity regressor
+│   └── lgbm_velmedia.pkl            # Wind speed regressor
+│
+├── 📂 tests/                        # TEST SUITE
+│   ├── __init__.py
+│   ├── 📂 config/
+│   ├── 📂 etl/
+│   ├── 📂 features/
+│   ├── 📂 modeling/
+│   ├── 📂 schemas/
+│   └── 📂 utils/
+│
+├── 📂 docs/                         # DOCUMENTATION
+│   ├── index.md                     # Main overview (this project)
+│   ├── architecture.md              # System design (this file)
+│   ├── pipelines.md                 # Pipeline descriptions
+│   ├── logic.md                     # Feature & model logic
+│   ├── app_structure.md             # Frontend pages & components
+│   ├── results.md                   # Performance metrics
+│   └── CONTRIBUTING.md              # Developer guide
+│
+├── pyproject.toml                   # Project metadata & dependencies
+├── mkdocs.yml                       # Documentation site config
+├── LICENSE                          # Usage rights
+└── README.md                        # Git repository readme
 ```
 
-## 🔍 Module Breakdown
+---
 
-### 1. Presentation Layer (`app/`)
+## 🔄 Data Flow
 
-- **`main.py`**: The **Entry Point**. It orchestrates the app startup:
-  1.  Sets page configuration.
-  2.  Runs the Loading Screen animation.
-  3.  Injects CSS styles.
-  4.  Renders the Landing Page.
-- **`assets/style.css`**: Defines the "Rainbow Theme". It overrides standard Streamlit components to give a polished, custom look (rounded cards, purple accents, custom fonts).
-- **`utils/data_loader.py`**: Uses `st.cache_data` to load heavy CSV files into RAM once. It also pre-converts date columns to `datetime` objects to optimize performance across pages.
+### Phase 1: Ingestion (ETL Stage 1)
 
-### 2. Execution Layer (`pipelines/`)
+```
+┌─────────────────┐
+│  AEMET OpenData │  Raw JSON (2009–2025)
+└────────┬────────┘  21 stations × 17 years
+         │
+         ├→ Rate-limit handler
+         ├→ Atomic writes (prevent corrupted files)
+         ├→ Metadata enrichment
+         │
+         ▼
+    [data/raw/Station_*/*.json]
+```
 
-- **`01_ingest_data.py`**:
-  - Reads station list from `settings.py`.
-  - Calls `src.etl.clients.aemet` to fetch data in 6-month chunks.
-  - Handles retries and consolidates data into yearly JSON files.
-- **`02_process_data.py`**:
-  - Loads raw JSONs.
-  - Calls `src.etl.clients.openmeteo` to fetch missing physical variables (Pressure, Clouds).
-  - Executes the Merge logic (`Left Join` on Date).
-  - Fills gaps using Linear Interpolation.
-- **`03_train_model.py`**:
-  - Generates features (Lags, Rolling).
-  - Trains 7 LightGBM models.
-  - Derives complex variables (Humidity from Temp/DewPoint).
-  - Calculates Rainbow Probability.
-  - Exports final results for the App.
+### Phase 2: Processing (ETL Stage 2)
 
-### 3. Backend Core (`src/`)
+```
+[data/raw/Station_*/*.json]
+         │
+         ├→ Open-Meteo API (pressure, clouds for 2009–2025)
+         ├→ Schema validation (Pydantic)
+         ├→ Outlier detection & filtering
+         ├→ Missing value imputation (forward-fill, interpolation)
+         │
+         ▼
+    [data/processed/weather_dataset_clean.csv]
+```
 
-#### `src/config/`
+### Phase 3: Feature Engineering
 
-- **`settings.py`**: The **Single Source of Truth**. Instead of hardcoding paths or keys, everything is defined here. It uses a `Paths` class to dynamically resolve directory locations, making the code portable across different operating systems.
+```
+[weather_dataset_clean.csv]
+         │
+         ├→ Lags: T-1, T-2, T-7 days
+         ├→ Rolling: 3-day, 7-day, 14-day windows
+         ├→ Cyclical: sin/cos(day-of-year), sin/cos(month)
+         ├→ Physics: Magnus formula, VPD, RH from dew point
+         │
+         ▼
+    [featurized_dataset]
+```
 
-#### `src/etl/` (Data Engineering)
+### Phase 4: Model Training
 
-- **`clients/`**: Wrappers for external APIs.
-  - `aemet.py`: Handles 429 Rate Limits with exponential backoff loops to ensure data completeness.
-  - `openmeteo.py`: Maps variables and adjusts Timezones (+6h shift) to align UTC data with Local daily aggregates.
-- **`ingestion.py`**: Handles File System logic. Uses `os.fsync()` to ensure data is physically written to disk before proceeding, preventing race conditions.
-- **`processing.py`**: The core data pipeline logic. It acts as the "Controller" for cleaning, filtering bad stations (<85% data), and merging datasets.
+```
+[featurized_dataset]
+         │
+         ├─→ Train/Val/Test Split (2009–2023 / 2024 / 2025)
+         │
+         ├─→ 7 LightGBM Models:
+         │   ├─ Rain Classifier (Binary)
+         │   ├─ Temperature Models (Mean, Min, Max)
+         │   └─ Atmosphere Models (Solar, Humidity, Wind)
+         │
+         ├─→ Cross-validation & hyperparameter tuning
+         │
+         ▼
+    [models/lgbm_*.pkl]
+```
 
-#### `src/features/` (The "Brain")
+### Phase 5: Forecasting
 
-Separates mathematical logic from training logic.
+```
+[Latest processed data + 7 trained models]
+         │
+         ├─→ One-Step Forecast (teacher forcing)
+         │   └→ Maximum theoretical accuracy
+         │
+         ├─→ Recursive Forecast (21 days)
+         │   └→ Uses predictions as inputs (realistic error)
+         │
+         ├─→ Rainbow Heuristic: rain_score × sun_score × humidity
+         │
+         ├─→ Wind Chill: 3 formulas (Standard, Heat Index, Steadman)
+         │
+         ▼
+    [data/predictions/rainbow_forecast_final.csv]
+```
 
-- **`physics.py`**: Contains static methods for thermodynamic calculations.
-  - _Example:_ Calculating **Relative Humidity** derived from Temperature and Dew Point using the **Magnus-Tetens Formula**.
-- **`transformation.py`**: Handles statistical feature generation.
-  - _Example:_ `add_time_cyclicality` converts 1-12 (Months) into Sine/Cosine waves so the model understands seasonality (e.g., December is close to January).
-  - _Example:_ creating Time Lags (t-1, t-2) and Rolling Windows.
+### Phase 6: Visualization
 
-#### `src/schemas/`
+```
+[rainbow_forecast_final.csv]
+         │
+         ├→ Streamlit Dashboard
+         │  ├─ Page 1: Rainbow probability with SVG viz
+         │  ├─ Page 2: Scatter plots (actual vs. predicted)
+         │  ├─ Page 3: 21-day forecast with maps
+         │  └─ Page 4: Wind chill calculator
+         │
+         ├→ Plotly charts (interactive)
+         ├→ Folium maps (geospatial)
+         │
+         ▼
+    [Web Browser (localhost:8501)]
+```
 
-- **`weather.py`**: Uses **Pydantic** to enforce data integrity. It validates every single data point downloaded from AEMET. If a field is missing or wrong (e.g., text in a float field), it cleans it or flags it before it enters the system.
+---
 
-#### `src/modeling/` (Machine Learning)
+## 🤖 The 7 Models
 
-- **`base.py`**: The parent class. It handles the standardized ML operations: loading data, splitting Train/Test, training LightGBM, and saving `.pkl` binary files.
-- **`trainers/*.py`**: Specific implementations for each target variable.
-  - `rain.py`: Defines the target as Binary (>0.1mm) and selects pressure-based features.
-  - `atmosphere.py`: Defines targets as Regression (Solar, Wind, Humidity).
-- **`rainbow.py`**: The business logic layer. It takes the raw ML predictions and applies the heuristic formula: $P = Rain \times Sun \times Humidity$.
+### Overview
 
-#### `src/utils/`
+| Model       | Type              | Target Variable   | Input Features               | Output      | Train Data |
+| ----------- | ----------------- | ----------------- | ---------------------------- | ----------- | ---------- |
+| **Model 1** | Binary Classifier | Precipitation     | 21 temporal + 6 weather lags | P(rain)     | 2009–2023  |
+| **Model 2** | Regressor         | Mean Temperature  | 21 temporal + 6 weather lags | Tmed (°C)   | 2009–2023  |
+| **Model 3** | Regressor         | Min Temperature   | 21 temporal + 6 weather lags | Tmin (°C)   | 2009–2023  |
+| **Model 4** | Regressor         | Max Temperature   | 21 temporal + 6 weather lags | Tmax (°C)   | 2009–2023  |
+| **Model 5** | Regressor         | Solar Radiation   | 21 temporal + 6 weather lags | Sol (hours) | 2009–2023  |
+| **Model 6** | Regressor         | Relative Humidity | 21 temporal + 6 weather lags | HR (%)      | 2009–2023  |
+| **Model 7** | Regressor         | Wind Speed        | 21 temporal + 6 weather lags | Vel (m/s)   | 2009–2023  |
 
-- **`logger.py`**: Sets up a standardized Python Logger. It outputs colored logs to the console for real-time monitoring and detailed logs to `logs/execution.log` for historical debugging.
-- **`resilience.py`**: Contains the `fetch_with_retry_logic` wrapper. It implements **Exponential Backoff** strategies to handle API timeouts and empty responses gracefully without crashing the pipeline.
+### Training Configuration
+
+**All models use:**
+
+- **Algorithm:** LightGBM (gradient boosting)
+- **Hyperparameters:** See `src/config/settings.py` → `ModelConfig`
+- **Feature Set:** 27 features (21 temporal + 6 weather lags)
+- **Validation:** 5-fold cross-validation on training set (2009–2023)
+- **Test Set:** 2024–2025 (held out for final evaluation)
+- **Scaling:** No scaling required for tree-based models
+
+---
+
+## ⚙️ Configuration & Settings
+
+All configuration is centralized in **src/config/settings.py**:
+
+```python
+# Example configuration structure
+class ModelConfig:
+    RAIN_THRESHOLD = 0.3        # Adjust to tune precision/recall
+    FORECAST_DAYS = 21
+    LAG_DAYS = [1, 2, 7]
+    ROLLING_WINDOWS = [3, 7, 14]
+
+class FeatureConfig:
+    CYCLICAL_FEATURES = ['dayofyear', 'month']
+    WEATHER_VARIABLES = ['tmed', 'tmin', 'tmax', 'sol', 'hrMedia', 'velmedia']
+
+class PathConfig:
+    RAW_DATA = 'data/raw/'
+    PROCESSED_DATA = 'data/processed/'
+    MODELS = 'models/'
+    PREDICTIONS = 'data/predictions/'
+```
+
+**Best Practice:** Modify configuration in `settings.py`, not in pipeline scripts. This ensures consistency across the entire system.
+
+---
+
+## 🔌 External APIs
+
+### AEMET OpenData
+
+- **Endpoint:** `https://opendata.aemet.es/`
+- **Data:** Temperature, wind, humidity, precipitation, solar radiation
+- **Coverage:** 2009–2025 for 21 Catalan stations
+- **Rate Limit:** 5 requests/second
+- **Documentation:** [AEMET API Docs](https://www.aemet.es/es/datos_abiertos/AEMET_OpenData)
+
+### Open-Meteo Archive
+
+- **Endpoint:** `https://archive-api.open-meteo.com/`
+- **Data:** Atmospheric pressure, cloud cover, additional physics
+- **Coverage:** Historical (1940–present)
+- **Rate Limit:** Generous (no strict limit for non-commercial)
+- **Documentation:** [Open-Meteo Archive Docs](https://open-meteo.com/en/docs/historical-weather-api)
+
+---
+
+## 📊 Model Explainability
+
+Each trained model includes:
+
+- **Feature Importance (Gain)** – Which features contribute most to predictions
+- **Residual Analysis** – Distribution of prediction errors by season
+- **Partial Dependence Plots** – Relationship between input features and output
+
+Generated in **Pipeline 07 (model_analysis.py)** and saved to `data/predictions/model_analysis/`.
+
+---
+
+**Architecture Status:** Production-Ready | **Last Updated:** January 2026

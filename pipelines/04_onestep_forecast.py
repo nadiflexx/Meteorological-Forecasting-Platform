@@ -56,7 +56,7 @@ def predict_simulation():
     df_target = df_eng[df_eng["fecha"].dt.year == target_year].copy()
 
     if df_target.empty:
-        log.error(f"❌ No hay datos de {target_year}.")
+        log.error(f"❌ There is no data for the target year {target_year}.")
         return
 
     # Predict

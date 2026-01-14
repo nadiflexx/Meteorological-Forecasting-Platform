@@ -1,6 +1,8 @@
 """
 Global Configuration Settings.
 Single Source of Truth (SSOT) for the entire project.
+This module centralizes all configuration parameters, paths,
+and constants used across the data engineering, modeling, and application layers.
 """
 
 from datetime import datetime
@@ -152,31 +154,121 @@ class FeatureConfig:
 class ModelConfig:
     """LightGBM Hyperparameters."""
 
-    # Regression (Temperature, Atmosphere)
-    LGBM_REGRESSION: dict[str, Any] = {
-        "objective": "regression",
-        "metric": "mae",
-        "boosting_type": "gbdt",
-        "num_leaves": 31,
-        "learning_rate": 0.05,
-        "feature_fraction": 0.9,
-        "verbose": -1,
-        "force_col_wise": True,
-    }
+    RAIN_THRESHOLD = 0.25
 
-    # Classification (Rain)
     LGBM_CLASSIFIER: dict[str, Any] = {
         "objective": "binary",
         "metric": "auc",
         "boosting_type": "gbdt",
-        "num_leaves": 40,
-        "learning_rate": 0.04,
-        "feature_fraction": 0.8,
+        "force_col_wise": True,
         "verbose": -1,
+        "num_leaves": 37,
+        "max_depth": 4,
+        "learning_rate": 0.032235621748698595,
+        "reg_alpha": 0.9169183316820849,
+        "reg_lambda": 2.651940750010021,
+        "min_child_samples": 44,
+        "feature_fraction": 0.636330328808212,
+        "bagging_fraction": 0.909668455323265,
     }
 
-    # Threshold to decide if it rains (0.0 to 1.0)
-    RAIN_THRESHOLD = 0.3
+    LGBM_TMED: dict[str, Any] = {
+        "objective": "regression",
+        "metric": "mae",
+        "boosting_type": "gbdt",
+        "force_col_wise": True,
+        "verbose": -1,
+        "num_leaves": 41,
+        "max_depth": 5,
+        "learning_rate": 0.06723617513088245,
+        "reg_alpha": 0.6228332087426022,
+        "reg_lambda": 2.5121822271850567,
+        "min_child_samples": 65,
+        "feature_fraction": 0.7563255346678099,
+        "bagging_fraction": 0.6072376331537934,
+    }
+
+    LGBM_TMIN: dict[str, Any] = {
+        "objective": "regression",
+        "metric": "mae",
+        "boosting_type": "gbdt",
+        "force_col_wise": True,
+        "verbose": -1,
+        "num_leaves": 43,
+        "max_depth": 9,
+        "learning_rate": 0.059195510550861974,
+        "reg_alpha": 1.1361424095900519,
+        "reg_lambda": 2.167485928708877,
+        "min_child_samples": 36,
+        "feature_fraction": 0.6375208382158656,
+        "bagging_fraction": 0.9119300992728608,
+    }
+
+    LGBM_TMAX: dict[str, Any] = {
+        "objective": "regression",
+        "metric": "mae",
+        "boosting_type": "gbdt",
+        "force_col_wise": True,
+        "verbose": -1,
+        "num_leaves": 37,
+        "max_depth": 12,
+        "learning_rate": 0.011095544508496185,
+        "reg_alpha": 0.9019404159108003,
+        "reg_lambda": 0.7160493445880121,
+        "min_child_samples": 99,
+        "feature_fraction": 0.8114543219319856,
+        "bagging_fraction": 0.8332258186352468,
+    }
+
+    LGBM_SOL: dict[str, Any] = {
+        "objective": "regression",
+        "metric": "mae",
+        "boosting_type": "gbdt",
+        "force_col_wise": True,
+        "verbose": -1,
+        "num_leaves": 43,
+        "max_depth": 6,
+        "learning_rate": 0.04528920174130866,
+        "reg_alpha": 1.720936067371178,
+        "reg_lambda": 1.7272416570501947,
+        "min_child_samples": 40,
+        "feature_fraction": 0.6927577892800432,
+        "bagging_fraction": 0.8231418480923356,
+    }
+
+    LGBM_HUMIDITY: dict[str, Any] = {
+        "objective": "regression",
+        "metric": "mae",
+        "boosting_type": "gbdt",
+        "force_col_wise": True,
+        "verbose": -1,
+        "num_leaves": 41,
+        "max_depth": 12,
+        "learning_rate": 0.043679171445154236,
+        "reg_alpha": 2.9046200438156284,
+        "reg_lambda": 0.10353854002640073,
+        "min_child_samples": 100,
+        "feature_fraction": 0.9342236788131926,
+        "bagging_fraction": 0.6070970558078345,
+    }
+
+    LGBM_VELMEDIA: dict[str, Any] = {
+        "objective": "regression",
+        "metric": "mae",
+        "boosting_type": "gbdt",
+        "force_col_wise": True,
+        "verbose": -1,
+        "num_leaves": 55,
+        "max_depth": 10,
+        "learning_rate": 0.013339580668834696,
+        "reg_alpha": 2.6241449258973133,
+        "reg_lambda": 1.775160382942544,
+        "min_child_samples": 38,
+        "feature_fraction": 0.9354261406812598,
+        "bagging_fraction": 0.7230802872685612,
+    }
+
+    RAIN_THRESHOLD = 0.25
 
 
 class StationData(TypedDict):
