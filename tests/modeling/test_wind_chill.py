@@ -108,7 +108,7 @@ def test_mid_boundaries_not_inclusive(calc):
     out1 = calc.calculate_apparent_temp(df1)
     assert out1.iloc[0] == pytest.approx(10.0)
 
-    # t == 26 => hot (sí)
+    # t == 26 => hot (Yes)
     df2 = pd.DataFrame(
         {"pred_tmed": [26.0], "pred_hrMedia": [60.0], "pred_velmedia": [0.0]}
     )
