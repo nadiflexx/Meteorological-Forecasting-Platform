@@ -219,7 +219,7 @@ with st.expander(
             f"""
         **Atmospheric Conditions:**
         - **Precipitation Probability:** {rain_html}
-        - **Wind Speed:** {detail_row["pred_velmedia"] * 3.6:.1f} km/h
+        - **Wind Speed:** {detail_row["pred_velmedia"]:.1f} m/s
         - **Sun Hours:** {detail_row["pred_sol"]:.1f} h
         {dew_point_info}
         - **Rainbow Probability:** {rainbow_html}

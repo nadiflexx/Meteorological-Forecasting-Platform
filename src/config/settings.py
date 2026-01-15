@@ -343,7 +343,7 @@ VAR_META = {
     "tmax": {"label": "Maximum Temperature", "unit": "°C", "color": "red"},
     "sol": {"label": "Hours of Sunlight", "unit": "h", "color": "gold"},
     "hrMedia": {"label": "Relative Humidity", "unit": "%", "color": "teal"},
-    "velmedia": {"label": "Wind Speed", "unit": "km/h", "color": "purple"},
+    "velmedia": {"label": "Wind Speed", "unit": "m/s", "color": "purple"},
     "rain": {"label": "Rain Probability", "unit": "%", "color": "navy"},
 }
 

@@ -10,33 +10,34 @@ This document presents the performance metrics of the 7 LightGBM models evaluate
 
 ### Overall Results Table
 
-| Variable | Model Type | Metric | Value | Quality | Notes |
-|----------|-----------|--------|-------|---------|-------|
-| **Precipitation** | Binary Classifier | ROC-AUC | 0.72 | ✅ Good | 73% discrimination between dry/rainy |
-| | | Precision | 0.68 | ✅ Good | 68% of predicted rainy days are actual |
-| | | Recall | 0.64 | ✅ Acceptable | 64% of actual rain days detected |
-| **Mean Temp** | Regressor | MAE | 1.19°C | 🚀 Excellent | Error < 1.2°C on average |
-| | | RMSE | 1.58°C | 🚀 Excellent | Penalizes large errors |
-| | | R² | 0.89 | 🚀 Excellent | Explains 89% of variance |
-| **Min Temp** | Regressor | MAE | 1.28°C | ✅ Very Good | Harder than mean (less averaging) |
-| | | RMSE | 1.71°C | ✅ Very Good | |
-| | | R² | 0.87 | ✅ Very Good | |
-| **Max Temp** | Regressor | MAE | 1.65°C | ✅ Good | Most difficult (microclimates) |
-| | | RMSE | 2.20°C | ✅ Good | |
-| | | R² | 0.83 | ✅ Good | |
-| **Solar Radiation** | Regressor | MAE | 1.53 hours | ⚠️ Acceptable | Cloud dynamics unpredictable |
-| | | RMSE | 2.10 hours | ⚠️ Acceptable | |
-| | | R² | 0.71 | ⚠️ Acceptable | Limited by sub-daily variability |
-| **Relative Humidity** | Regressor | MAE | ~7.7% | ⚠️ Acceptable | Volatile, driven by convection |
-| | | RMSE | 10.2% | ⚠️ Acceptable | |
-| | | R² | 0.68 | ⚠️ Acceptable | |
-| **Wind Speed** | Regressor | MAE | 0.52 m/s | 🚀 Excellent | Synoptic patterns predictable |
-| | | RMSE | 0.79 m/s | 🚀 Excellent | |
-| | | R² | 0.85 | ✅ Very Good | |
+| Variable              | Model Type        | Metric    | Value      | Quality       | Notes                                  |
+| --------------------- | ----------------- | --------- | ---------- | ------------- | -------------------------------------- |
+| **Precipitation**     | Binary Classifier | ROC-AUC   | 0.72       | ✅ Good       | 73% discrimination between dry/rainy   |
+|                       |                   | Precision | 0.68       | ✅ Good       | 68% of predicted rainy days are actual |
+|                       |                   | Recall    | 0.64       | ✅ Acceptable | 64% of actual rain days detected       |
+| **Mean Temp**         | Regressor         | MAE       | 1.19°C     | 🚀 Excellent  | Error < 1.2°C on average               |
+|                       |                   | RMSE      | 1.58°C     | 🚀 Excellent  | Penalizes large errors                 |
+|                       |                   | R²        | 0.89       | 🚀 Excellent  | Explains 89% of variance               |
+| **Min Temp**          | Regressor         | MAE       | 1.28°C     | ✅ Very Good  | Harder than mean (less averaging)      |
+|                       |                   | RMSE      | 1.71°C     | ✅ Very Good  |                                        |
+|                       |                   | R²        | 0.87       | ✅ Very Good  |                                        |
+| **Max Temp**          | Regressor         | MAE       | 1.65°C     | ✅ Good       | Most difficult (microclimates)         |
+|                       |                   | RMSE      | 2.20°C     | ✅ Good       |                                        |
+|                       |                   | R²        | 0.83       | ✅ Good       |                                        |
+| **Solar Radiation**   | Regressor         | MAE       | 1.53 hours | ⚠️ Acceptable | Cloud dynamics unpredictable           |
+|                       |                   | RMSE      | 2.10 hours | ⚠️ Acceptable |                                        |
+|                       |                   | R²        | 0.71       | ⚠️ Acceptable | Limited by sub-daily variability       |
+| **Relative Humidity** | Regressor         | MAE       | ~7.7%      | ⚠️ Acceptable | Volatile, driven by convection         |
+|                       |                   | RMSE      | 10.2%      | ⚠️ Acceptable |                                        |
+|                       |                   | R²        | 0.68       | ⚠️ Acceptable |                                        |
+| **Wind Speed**        | Regressor         | MAE       | 0.52 m/s   | 🚀 Excellent  | Synoptic patterns predictable          |
+|                       |                   | RMSE      | 0.79 m/s   | 🚀 Excellent  |                                        |
+|                       |                   | R²        | 0.85       | ✅ Very Good  |                                        |
 
 ### Metric Definitions
 
 **MAE (Mean Absolute Error)**
+
 ```
 MAE = (1/n) × Σ |predicted - actual|
 
@@ -47,6 +48,7 @@ Interpretation:
 ```
 
 **RMSE (Root Mean Squared Error)**
+
 ```
 RMSE = sqrt((1/n) × Σ (predicted - actual)²)
 
@@ -57,6 +59,7 @@ Interpretation:
 ```
 
 **R² (Coefficient of Determination)**
+
 ```
 R² = 1 - (SS_residual / SS_total)
 
@@ -67,6 +70,7 @@ Interpretation:
 ```
 
 **ROC-AUC (Receiver Operating Characteristic)**
+
 ```
 Area Under the ROC Curve
 
@@ -123,6 +127,7 @@ Interpretation:
 ### What is Teacher Forcing?
 
 **One-Step Forecast ("Teacher Forcing"):**
+
 - Day 1: Predict using **actual** prior day values
 - Day 2: Predict using **actual** prior day values
 - ... All days use real historical data as input
@@ -134,6 +139,7 @@ Interpretation:
 ### What is Recursive Forecasting?
 
 **Recursive Forecast ("Autoregressive"):**
+
 - Day 1: Predict using actual prior day values
 - Day 2: Predict using **predicted** Day 1 values
 - Day 3: Predict using **predicted** Days 1–2 values
@@ -159,8 +165,8 @@ Error (MAE)
     │                       /
   2.0│                   /
     │                /
-  1.5│              
-    │            /  
+  1.5│
+    │            /
   1.0│          ·  One-Step Forecast
     │      ·        (Teacher Forcing)
   0.5│  ·
@@ -171,15 +177,16 @@ Error (MAE)
 
 ### Quantitative Degradation
 
-| Day | One-Step MAE | Recursive MAE | Degradation |
-|-----|--------------|---------------|-------------|
-| **1** | 1.19°C | 1.19°C | 0% |
-| **3** | 1.22°C | 1.35°C | +11% |
-| **7** | 1.25°C | 1.62°C | +30% |
-| **14** | 1.28°C | 2.15°C | +68% |
-| **21** | 1.32°C | 2.85°C | +116% |
+| Day    | One-Step MAE | Recursive MAE | Degradation |
+| ------ | ------------ | ------------- | ----------- |
+| **1**  | 1.19°C       | 1.19°C        | 0%          |
+| **3**  | 1.22°C       | 1.35°C        | +11%        |
+| **7**  | 1.25°C       | 1.62°C        | +30%        |
+| **14** | 1.28°C       | 2.15°C        | +68%        |
+| **21** | 1.32°C       | 2.85°C        | +116%       |
 
 **Interpretation:**
+
 - Days 1–3: Error stable (~1.2°C)
 - Days 4–7: Noticeable degradation (~+30%)
 - Days 14–21: Significant (error doubles by 3 weeks)
@@ -194,14 +201,14 @@ Error (MAE)
 
 Some models perform differently by season:
 
-| Variable | Winter MAE | Summer MAE | Difference | Reason |
-|----------|-----------|-----------|-----------|---------|
-| **Tmed** | 0.98°C | 1.45°C | +48% | Summer: more convection, microclimates |
-| **Tmin** | 1.02°C | 1.58°C | +55% | Night-time cooling harder in warm months |
-| **Tmax** | 1.48°C | 1.92°C | +30% | Cloud shading unpredictable |
-| **Sol** | 1.23 h | 1.92 h | +56% | Summer clouds more variable |
-| **HR** | 6.2% | 9.5% | +53% | Summer convection volatility |
-| **Vel** | 0.45 m/s | 0.62 m/s | +38% | Synoptic wind weaker in summer |
+| Variable | Winter MAE | Summer MAE | Difference | Reason                                   |
+| -------- | ---------- | ---------- | ---------- | ---------------------------------------- |
+| **Tmed** | 0.98°C     | 1.45°C     | +48%       | Summer: more convection, microclimates   |
+| **Tmin** | 1.02°C     | 1.58°C     | +55%       | Night-time cooling harder in warm months |
+| **Tmax** | 1.48°C     | 1.92°C     | +30%       | Cloud shading unpredictable              |
+| **Sol**  | 1.23 h     | 1.92 h     | +56%       | Summer clouds more variable              |
+| **HR**   | 6.2%       | 9.5%       | +53%       | Summer convection volatility             |
+| **Vel**  | 0.45 m/s   | 0.62 m/s   | +38%       | Synoptic wind weaker in summer           |
 
 **Insight:** Model accuracy drops in summer (more atmospheric instability, convection, microclimates)
 
@@ -232,31 +239,35 @@ Some models perform differently by season:
 
 ### When to Use Which Variable
 
-| Variable | Recommended For | NOT Recommended For |
-|----------|-----------------|-------------------|
-| **Tmed** | ✅ Irrigation, tourism, health | ❌ Precise heating/cooling calculations |
-| **Tmin** | ✅ Frost warnings, crop protection | ❌ Night-time hour-by-hour planning |
-| **Tmax** | ✅ Heat stress alerts | ❌ Peak afternoon activity planning |
-| **Sol** | ✅ Monthly solar energy summaries | ❌ Solar panel hourly generation |
-| **HR** | ✅ Qualitative dryness trends | ❌ Precise irrigation humidity triggers |
-| **Vel** | ✅ Wind warnings, sports events | ❌ Precise wind turbine generation |
-| **Prec** | ✅ Rain event warnings (P > 0.3) | ❌ Exact rainfall amount predictions |
+| Variable | Recommended For                    | NOT Recommended For                     |
+| -------- | ---------------------------------- | --------------------------------------- |
+| **Tmed** | ✅ Irrigation, tourism, health     | ❌ Precise heating/cooling calculations |
+| **Tmin** | ✅ Frost warnings, crop protection | ❌ Night-time hour-by-hour planning     |
+| **Tmax** | ✅ Heat stress alerts              | ❌ Peak afternoon activity planning     |
+| **Sol**  | ✅ Monthly solar energy summaries  | ❌ Solar panel hourly generation        |
+| **HR**   | ✅ Qualitative dryness trends      | ❌ Precise irrigation humidity triggers |
+| **Vel**  | ✅ Wind warnings, sports events    | ❌ Precise wind turbine generation      |
+| **Prec** | ✅ Rain event warnings (P > 0.3)   | ❌ Exact rainfall amount predictions    |
 
 ### Example: When to Trust the Model
 
 ✅ **"What's the likely high temperature range?"**
+
 - Expected 26–28°C (mean ± 1 std dev)
 - Model predicts 26.5°C → Expect 24.9–28.1°C
 
 ✅ **"Will it rain tomorrow?"**
+
 - Model P(rain) = 0.75 → High likelihood
 - Take umbrella, plan outdoor activities accordingly
 
 ✅ **"How cold will it feel?"**
-- Model: Tmed = 2°C, Wind = 15 km/h → Wind Chill ≈ -8°C
+
+- Model: Tmed = 2°C, Wind = 15 m/s → Wind Chill ≈ -8°C
 - Dress warmly, watch for frostbite risk
 
 ❌ **"Will it be exactly 25.3°C at 3 PM?"**
+
 - Model error ±1.2°C; daily aggregation obscures sub-hourly variation
 - Not reliable at sub-daily granularity
 
@@ -307,15 +318,18 @@ Insight: Auto-regressive (previous temperature) dominates → persistence
 ## 🔮 Known Limitations
 
 1. **Daily Aggregation:** AEMET data is daily (loses sub-daily variation)
+
    - Solar radiation varies hour-by-hour (clouds)
    - Humidity follows diurnal cycle (not captured)
    - **Impact:** Sol & HR models have higher error
 
 2. **Stationary Climate Assumption:** Models trained on 2009–2023
+
    - Climate change causing trend shifts (slow)
    - **Impact:** Mild degradation in long-term forecasts
 
 3. **Limited Feature Set:** Only uses AEMET + Open-Meteo
+
    - No satellite imagery (cloud cover detail)
    - No soil moisture (affects local weather)
    - **Impact:** Moderate improvement possible with more data

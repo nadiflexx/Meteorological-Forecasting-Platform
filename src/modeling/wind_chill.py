@@ -21,7 +21,7 @@ class WindChillCalculator:
             df_preds (pd.DataFrame):
         - 'pred_tmed': Predicted dry temperature (°C).
         - 'pred_hrMedia': Predicted relative humidity (%).
-        - 'pred_velmedia': Predicted wind speed (km/h).
+        - 'pred_velmedia': Predicted wind speed (m/s).
         """
         df = df_preds.copy()
 
@@ -31,13 +31,16 @@ class WindChillCalculator:
 
         df["pred_windchill"] = df["pred_tmed"]
 
+        v_ms = df["pred_velmedia"]
+        v_kmh = v_ms * 3.6
+
         # --- CASE 1: WIND CHILL (COLD) ---
-        mask_cold = (df["pred_tmed"] <= 10) & (df["pred_velmedia"] > 4.8)
+        mask_cold = (df["pred_tmed"] <= 10) & (v_kmh > 4.8)
         df.loc[mask_cold, "pred_windchill"] = (
             13.12
             + 0.6215 * df["pred_tmed"]
-            - 11.37 * (df["pred_velmedia"] ** 0.16)
-            + 0.3965 * df["pred_tmed"] * (df["pred_velmedia"] ** 0.16)
+            - 11.37 * (v_kmh**0.16)
+            + 0.3965 * df["pred_tmed"] * (v_kmh**0.16)
         )
 
         # --- CASE 2: HEAT INDEX (Hot) ---
@@ -56,7 +59,7 @@ class WindChillCalculator:
         e = get_vapor_pressure(df["pred_tmed"], df["pred_hrMedia"])
 
         df.loc[mask_mid, "pred_windchill"] = (
-            df["pred_tmed"] + (0.33 * e) - (0.70 * df["pred_velmedia"]) - 4.00
+            df["pred_tmed"] + (0.33 * e) - (0.70 * v_ms) - 4.00
         )
 
         df["pred_windchill"] = df["pred_windchill"].round(1)

@@ -338,7 +338,7 @@ WC = 13.12 + 0.6215×T - 11.37×V^0.16 + 0.3965×T×V^0.16
 
 Where:
   T = Temperature (°C)
-  V = Wind speed (km/h)  [convert m/s: multiply by 3.6]
+  V = Wind speed (m/s)  [convert m/s: multiply by 3.6]
   WC = Apparent temperature (°C)
 
 Physical interpretation:
@@ -346,7 +346,7 @@ Physical interpretation:
   - Wind chill < actual temperature (feels colder)
 
 Example:
-  T = 5°C, V = 20 km/h
+  T = 5°C, V = 20 m/s
   WC = 13.12 + 0.6215×5 - 11.37×20^0.16 + 0.3965×5×20^0.16
      ≈ -3.2°C  (feels 8°C colder!)
 ```
@@ -421,7 +421,7 @@ def calculate_apparent_temperature(
 
 | Scenario                     | Apparent Temp   | Impact              |
 | ---------------------------- | --------------- | ------------------- |
-| **Winter:** T=0°C, V=30 km/h | WC = -15°C      | Frostbite risk ⚠️   |
+| **Winter:** T=0°C, V=30 m/s  | WC = -15°C      | Frostbite risk ⚠️   |
 | **Summer:** T=35°C, RH=80%   | HI = 50°C       | Heat stroke risk ⚠️ |
 | **Spring:** T=15°C, V=10 m/s | Steadman ≈ 12°C | Jacket recommended  |
 
