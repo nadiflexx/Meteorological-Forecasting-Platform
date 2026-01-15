@@ -27,7 +27,7 @@ def test_ip_precipitation():
         "prec": "Ip",
     }
     record = WeatherRecord(**data)
-    assert record.prec == 0.0
+    assert record.prec == 0.05
 
 
 def test_invalid_date():

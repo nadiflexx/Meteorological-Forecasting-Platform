@@ -180,7 +180,7 @@ with tab3:
 
     with c1:
         mae, r2 = calculate_metrics(df_val, "velmedia")
-        st.metric("Wind Speed MAE", f"{mae:.2f} km/h")
+        st.metric("Wind Speed MAE", f"{mae:.2f} m/s")
         st.metric("Wind R²", f"{r2:.3f}")
 
     with c2:
@@ -200,7 +200,7 @@ with tab3:
 
     with p1:
         st.plotly_chart(
-            plot_scatter_vs_real(df_val, "velmedia", "Wind Speed", "km/h"),
+            plot_scatter_vs_real(df_val, "velmedia", "Wind Speed", "m/s"),
             width="stretch",
         )
     with p2:
